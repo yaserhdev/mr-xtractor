@@ -18,4 +18,80 @@ document.addEventListener('DOMContentLoaded', () => {
     cards.forEach(card => {
         observer.observe(card);
     });
+
+    const tabs = document.querySelectorAll('.tabs li');
+    const categoryDivs = {
+        'Coupes': document.querySelector('.coupes'),
+        'Sedans': document.querySelector('.sedans'),
+        'SUVs': document.querySelector('.suvs'),
+        'Trucks': document.querySelector('.trucks')
+    };
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      e.preventDefault();
+      
+      // Remove active class from all tabs
+      tabs.forEach(t => t.classList.remove('is-active'));
+      
+      // Add active class to clicked tab
+      tab.classList.add('is-active');
+      
+      // Get the category name from the clicked tab
+      const categoryName = tab.querySelector('a').textContent;
+      
+      // Hide all category divs
+      Object.values(categoryDivs).forEach(div => {
+        if (div) div.classList.add('is-hidden');
+      });
+      
+      // Show the selected category div
+      if (categoryDivs[categoryName]) {
+        categoryDivs[categoryName].classList.remove('is-hidden');
+      }
+    });
+  });
 });
+
+// document.addEventListener('DOMContentLoaded', () => {
+//     const tabs = document.querySelectorAll('.tabs li');
+//     const categoryDivs = {
+//         'Coupes': document.querySelector('.coupes'),
+//         'Sedans': document.querySelector('.sedans'),
+//         'SUVs': document.querySelector('.suvs'),
+//         'Trucks': document.querySelector('.trucks')
+//     };
+
+//     // Initial setup: Hide all categories and show the first one (Coupes)
+//     Object.values(categoryDivs).forEach(div => {
+//         if (div) div.style.display = 'none';
+//     });
+//     if (categoryDivs['Coupes']) {
+//         categoryDivs['Coupes'].style.display = 'block';
+//     }
+
+//     tabs.forEach(tab => {
+//         tab.addEventListener('click', (e) => {
+//             e.preventDefault();
+            
+//             // Remove active class from all tabs
+//             tabs.forEach(t => t.classList.remove('is-active'));
+            
+//             // Add active class to clicked tab
+//             tab.classList.add('is-active');
+            
+//             // Get the category name from the clicked tab
+//             const categoryName = tab.querySelector('a').textContent.trim();
+            
+//             // Hide all category divs
+//             Object.values(categoryDivs).forEach(div => {
+//                 if (div) div.style.display = 'none';
+//             });
+            
+//             // Show the selected category div
+//             if (categoryDivs[categoryName]) {
+//                 categoryDivs[categoryName].style.display = 'block';
+//             }
+//         });
+//     });
+// });
