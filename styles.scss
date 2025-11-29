@@ -22,7 +22,6 @@ $large: 1000px;
   font-size: 20px;
 }
 
-
 #express,
 #clay-seal {
   margin-bottom: 10px;
@@ -32,27 +31,27 @@ $large: 1000px;
   height: 100%;
 }
 
+// Hero section - fixed background scaling
 #home {
   background-image: url("./banner.jpg");
   background-position: center;
   background-repeat: no-repeat;
+  background-size: contain;
+  // Aspect ratio of image: 738/1920 = 38.4375%
+  aspect-ratio: 1920 / 738;
+  padding: 0;
+  margin: 0;
+}
+
+#home .hero-body {
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .title span:first-child {
   text-decoration: underline;
   text-decoration-color: #E20408;
-}
-
-@media (min-width: 980px) {
-  #home {
-    background-size: cover;
-  }
-}
-
-@media (max-width: 979px) {
-  #home {
-    background-size: contain;
-  }
 }
 
 @media (min-width: 800px) {
@@ -77,10 +76,6 @@ $large: 1000px;
   .title span:first-child {
     text-underline-offset: 12.5px;
   }
-
-  #about {
-    padding-top: 36px;
-  }
 }
 
 @media (min-width: 500px) and (max-width: 639px) {
@@ -99,10 +94,6 @@ $large: 1000px;
   .title span:first-child {
     text-underline-offset: 10px;
   }
-
-  #about {
-    padding-top: 24px;
-  }
 }
 
 @media (min-width: 300px) and (max-width: 499px) {
@@ -120,10 +111,6 @@ $large: 1000px;
 
   .title span:first-child {
     text-underline-offset: 7.5px;
-  }
-
-  #about {
-    padding-top: 12px;
   }
 }
 

@@ -21583,6 +21583,16 @@ has-background-danger.is-hoverable:active {
   background-image: url("./banner.jpg");
   background-position: center;
   background-repeat: no-repeat;
+  background-size: contain;
+  aspect-ratio: 1920/738;
+  padding: 0;
+  margin: 0;
+}
+
+#home .hero-body {
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .title span:first-child {
@@ -21590,16 +21600,6 @@ has-background-danger.is-hoverable:active {
   text-decoration-color: #E20408;
 }
 
-@media (min-width: 980px) {
-  #home {
-    background-size: cover;
-  }
-}
-@media (max-width: 979px) {
-  #home {
-    background-size: contain;
-  }
-}
 @media (min-width: 800px) {
   .title span:first-child {
     text-underline-offset: 15px;
@@ -21618,9 +21618,6 @@ has-background-danger.is-hoverable:active {
   .title span:first-child {
     text-underline-offset: 12.5px;
   }
-  #about {
-    padding-top: 36px;
-  }
 }
 @media (min-width: 500px) and (max-width: 639px) {
   #home .title, section .title.is-2 {
@@ -21635,9 +21632,6 @@ has-background-danger.is-hoverable:active {
   .title span:first-child {
     text-underline-offset: 10px;
   }
-  #about {
-    padding-top: 24px;
-  }
 }
 @media (min-width: 300px) and (max-width: 499px) {
   #home .title, section .title.is-2 {
@@ -21651,9 +21645,6 @@ has-background-danger.is-hoverable:active {
   }
   .title span:first-child {
     text-underline-offset: 7.5px;
-  }
-  #about {
-    padding-top: 12px;
   }
 }
 section .title.is-2 {
