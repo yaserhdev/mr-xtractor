@@ -93,13 +93,6 @@ const initCarousel = () => {
     // Auto-rotation speed (degrees per frame at 60fps)
     const autoRotationSpeed = 0.05; // Continuous rotation speed
 
-    // Touch/drag state
-    let touchStartX = 0;
-    let touchStartRotation = 0;
-    let lastTouchX = 0;
-    let lastTouchTime = 0;
-    let touchVelocity = 0;
-
     // Physics constants
     const friction = 0.95; // Velocity decay
     const snapStrength = 0.2; // How fast buttons snap to position
@@ -289,57 +282,41 @@ const initCarousel = () => {
         }
     });
 
-    // Touch/Swipe with momentum physics
-    carousel.addEventListener('touchstart', (e) => {
-        isUserInteracting = true;
+    // Touch handling - pause on touch and swipe navigation
+    let touchStartX = 0;
+    let touchStartY = 0;
+    const swipeThreshold = 50; // Minimum distance for a swipe
+
+    carouselScene.addEventListener('touchstart', (e) => {
+        isHovering = true;
         isAutoRotating = false;
-        touchStartX = e.touches[0].clientX;
-        touchStartRotation = currentRotation;
-        lastTouchX = touchStartX;
-        lastTouchTime = Date.now();
-        touchVelocity = 0;
         rotationVelocity = 0;
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
-    carousel.addEventListener('touchmove', (e) => {
-        if (!isUserInteracting) return;
+    carouselScene.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].clientX;
+        const touchEndY = e.changedTouches[0].clientY;
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
 
-        const touchX = e.touches[0].clientX;
-        const deltaX = touchX - touchStartX;
-        const now = Date.now();
-        const deltaTime = now - lastTouchTime;
-
-        // Calculate rotation based on drag distance
-        // Adjust sensitivity: more pixels = more rotation
-        const rotationDelta = deltaX * 0.3;
-        currentRotation = touchStartRotation + rotationDelta;
-
-        // Calculate velocity for momentum
-        if (deltaTime > 0) {
-            const deltaMove = touchX - lastTouchX;
-            touchVelocity = (deltaMove / deltaTime) * 16; // Normalize to ~60fps
+        // Check if this is a horizontal swipe (not vertical scroll)
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
+            const currentIndex = getCurrentIndex();
+            if (deltaX > 0) {
+                // Swipe right - go to previous
+                snapToSlide((currentIndex - 1 + totalCards) % totalCards);
+            } else {
+                // Swipe left - go to next
+                snapToSlide((currentIndex + 1) % totalCards);
+            }
         }
 
-        lastTouchX = touchX;
-        lastTouchTime = now;
-    }, { passive: true });
-
-    carousel.addEventListener('touchend', () => {
-        isUserInteracting = false;
-
-        // Apply momentum based on swipe velocity
-        rotationVelocity = touchVelocity * 0.5; // Adjust momentum strength
-
-        // If velocity is low, resume auto-rotation
-        if (Math.abs(rotationVelocity) < 1) {
+        // Resume auto-rotation after touch ends
+        isHovering = false;
+        if (!isUserInteracting) {
             isAutoRotating = true;
-        } else {
-            // Auto-rotation resumes after momentum fades
-            setTimeout(() => {
-                if (Math.abs(rotationVelocity) < 0.1) {
-                    isAutoRotating = true;
-                }
-            }, 500);
         }
     }, { passive: true });
 
