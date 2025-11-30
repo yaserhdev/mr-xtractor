@@ -282,44 +282,6 @@ const initCarousel = () => {
         }
     });
 
-    // Touch handling - pause on touch and swipe navigation
-    let touchStartX = 0;
-    let touchStartY = 0;
-    const swipeThreshold = 50; // Minimum distance for a swipe
-
-    carouselScene.addEventListener('touchstart', (e) => {
-        isHovering = true;
-        isAutoRotating = false;
-        rotationVelocity = 0;
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    carouselScene.addEventListener('touchend', (e) => {
-        const touchEndX = e.changedTouches[0].clientX;
-        const touchEndY = e.changedTouches[0].clientY;
-        const deltaX = touchEndX - touchStartX;
-        const deltaY = touchEndY - touchStartY;
-
-        // Check if this is a horizontal swipe (not vertical scroll)
-        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > swipeThreshold) {
-            const currentIndex = getCurrentIndex();
-            if (deltaX > 0) {
-                // Swipe right - go to previous
-                snapToSlide((currentIndex - 1 + totalCards) % totalCards);
-            } else {
-                // Swipe left - go to next
-                snapToSlide((currentIndex + 1) % totalCards);
-            }
-        }
-
-        // Resume auto-rotation after touch ends
-        isHovering = false;
-        if (!isUserInteracting) {
-            isAutoRotating = true;
-        }
-    }, { passive: true });
-
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (e.key === 'ArrowLeft') {
