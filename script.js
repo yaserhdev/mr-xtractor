@@ -267,7 +267,7 @@ const initCarousel = () => {
         snapToSlide((currentIndex + 1) % totalCards);
     });
 
-    // Pause on hover
+    // Pause on hover (desktop only)
     const carouselScene = document.querySelector('.carousel-scene');
     carouselScene.addEventListener('mouseenter', () => {
         isHovering = true;
@@ -281,6 +281,15 @@ const initCarousel = () => {
             isAutoRotating = true;
         }
     });
+
+    // Prevent touch interactions on carousel
+    carouselScene.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+    }, { passive: false });
+
+    carouselScene.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+    }, { passive: false });
 
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
