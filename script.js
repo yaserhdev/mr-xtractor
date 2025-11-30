@@ -282,13 +282,26 @@ const initCarousel = () => {
         }
     });
 
-    // Prevent touch interactions on carousel
+    // Prevent horizontal touch dragging on carousel while allowing vertical scrolling
+    let touchStartX = 0;
+    let touchStartY = 0;
+
     carouselScene.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-    }, { passive: false });
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
 
     carouselScene.addEventListener('touchmove', (e) => {
-        e.preventDefault();
+        const touchMoveX = e.touches[0].clientX;
+        const touchMoveY = e.touches[0].clientY;
+        const deltaX = Math.abs(touchMoveX - touchStartX);
+        const deltaY = Math.abs(touchMoveY - touchStartY);
+
+        // If horizontal movement is greater than vertical, prevent default (block horizontal drag)
+        // Otherwise allow vertical scrolling
+        if (deltaX > deltaY) {
+            e.preventDefault();
+        }
     }, { passive: false });
 
     // Keyboard navigation
