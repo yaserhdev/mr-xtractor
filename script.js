@@ -1,4 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
+  // ===========================================
+  // NAVBAR FUNCTIONALITY
+  // ===========================================
   const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
   $navbarBurgers.forEach(el => {
@@ -58,19 +61,22 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  const cards = document.querySelectorAll('.card');
+  // ===========================================
+  // SERVICE CARDS ANIMATION
+  // ===========================================
+  const cards = document.querySelectorAll('#services .card');
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target); // Stop observing once animated
+          observer.unobserve(entry.target);
         }
       });
     },
     {
-      threshold: 0.1 // Trigger when 10% of the card is visible
+      threshold: 0.1
     }
   );
 
@@ -78,52 +84,19 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(card);
   });
 
-  const tabs = document.querySelectorAll('.tabs li');
-  const categoryDivs = {
-    'Coupes': document.querySelector('.coupes'),
-    'Sedans': document.querySelector('.sedans'),
-    'SUVs': document.querySelector('.suvs'),
-    'Trucks': document.querySelector('.trucks')
-  };
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      // Remove active class from all tabs
-      tabs.forEach(t => t.classList.remove('is-active'));
-
-      // Add active class to clicked tab
-      tab.classList.add('is-active');
-
-      // Get the category name from the clicked tab
-      const categoryName = tab.querySelector('a').textContent;
-
-      // Hide all category divs
-      Object.values(categoryDivs).forEach(div => {
-        if (div) div.classList.add('is-hidden');
-      });
-
-      // Show the selected category div
-      if (categoryDivs[categoryName]) {
-        categoryDivs[categoryName].classList.remove('is-hidden');
-      }
-    });
-  });
-
-// ===========================================
-// 3D REVIEW CAROUSEL (SMOOTH CONTINUOUS ROTATION)
-// ===========================================
-const initCarousel = () => {
+  // ===========================================
+  // 3D REVIEW CAROUSEL (EXISTING - UNCHANGED)
+  // ===========================================
+  const initReviewCarousel = () => {
     const carousel = document.querySelector('.carousel');
-    const cards = document.querySelectorAll('.carousel-card');
+    const reviewCards = document.querySelectorAll('.carousel-card');
     const prevBtn = document.querySelector('.carousel-btn-prev');
     const nextBtn = document.querySelector('.carousel-btn-next');
     const indicatorsContainer = document.querySelector('.carousel-indicators');
 
-    if (!carousel || cards.length === 0) return;
+    if (!carousel || reviewCards.length === 0) return;
 
-    const totalCards = cards.length;
+    const totalCards = reviewCards.length;
     const theta = 360 / totalCards;
     const mobileBreakpoint = 650;
 
@@ -134,221 +107,202 @@ const initCarousel = () => {
     let isAutoRotating = true;
     let isUserInteracting = false;
     let pauseTimeout = null;
-    let mobileCurrentIndex = 0; // Track current index in mobile view
+    let mobileCurrentIndex = 0;
 
-    // Auto-rotation speed (degrees per frame at 60fps)
-    const autoRotationSpeed = 0.05; // Continuous rotation speed
+    // Auto-rotation speed
+    const autoRotationSpeed = 0.05;
 
     // Physics constants
-    const friction = 0.95; // Velocity decay
-    const snapStrength = 0.05; // How fast buttons snap to position
+    const friction = 0.95;
+    const snapStrength = 0.05;
 
     // Get card width dynamically
-    const getCardWidth = () => cards[0].offsetWidth;
+    const getCardWidth = () => reviewCards[0].offsetWidth;
 
-    // Check if mobile view (no 3D)
+    // Check if mobile view
     const isMobileView = () => window.innerWidth <= mobileBreakpoint;
 
     // Get gap based on viewport width
     const getCardGap = () => {
-        if (window.innerWidth <= 800) return 20;
-        else if (window.innerWidth <= 1000) return 25;
-        return 30;
+      if (window.innerWidth <= 800) return 20;
+      else if (window.innerWidth <= 1000) return 25;
+      return 30;
     };
 
-    // Calculate radius to achieve desired gap between cards
+    // Calculate radius
     const getRadius = () => {
-        if (isMobileView()) return 0;
-        const cardWidth = getCardWidth();
-        const cardGap = getCardGap();
-        const baseRadius = Math.round((cardWidth / 2) / Math.tan(Math.PI / totalCards));
-        const gapAdjustment = cardGap / (2 * Math.sin(Math.PI / totalCards));
-        return Math.round(baseRadius + gapAdjustment);
+      if (isMobileView()) return 0;
+      const cardWidth = getCardWidth();
+      const cardGap = getCardGap();
+      const baseRadius = Math.round((cardWidth / 2) / Math.tan(Math.PI / totalCards));
+      const gapAdjustment = cardGap / (2 * Math.sin(Math.PI / totalCards));
+      return Math.round(baseRadius + gapAdjustment);
     };
 
     // Create indicator dots
-    cards.forEach((_, index) => {
-        const indicator = document.createElement('button');
-        indicator.classList.add('carousel-indicator');
-        indicator.setAttribute('aria-label', `Go to review ${index + 1}`);
-        if (index === 0) indicator.classList.add('is-active');
-        indicator.addEventListener('click', () => snapToSlide(index));
-        indicatorsContainer.appendChild(indicator);
+    reviewCards.forEach((_, index) => {
+      const indicator = document.createElement('button');
+      indicator.classList.add('carousel-indicator');
+      indicator.setAttribute('aria-label', `Go to review ${index + 1}`);
+      if (index === 0) indicator.classList.add('is-active');
+      indicator.addEventListener('click', () => snapToSlide(index));
+      indicatorsContainer.appendChild(indicator);
     });
 
     const indicators = document.querySelectorAll('.carousel-indicator');
 
     // Position cards in 3D space
     const positionCards = () => {
-        if (isMobileView()) {
-            // Clear all transforms for mobile view
-            carousel.style.transform = 'none';
-            cards.forEach(card => {
-                card.style.transform = 'none';
-            });
-            return;
-        }
-
-        const radius = getRadius();
-        cards.forEach((card, index) => {
-            const angle = theta * index;
-            card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+      if (isMobileView()) {
+        carousel.style.transform = 'none';
+        reviewCards.forEach(card => {
+          card.style.transform = 'none';
         });
+        return;
+      }
+
+      const radius = getRadius();
+      reviewCards.forEach((card, index) => {
+        const angle = theta * index;
+        card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
+      });
     };
 
-    // Get current active card index based on rotation
+    // Get current active card index
     const getCurrentIndex = () => {
-        if (isMobileView()) {
-            return mobileCurrentIndex;
-        }
-        // Since we rotate negatively, we need to negate and normalize
-        const normalizedRotation = ((-currentRotation % 360) + 360) % 360;
-        const index = Math.round(normalizedRotation / theta) % totalCards;
-        return index;
+      if (isMobileView()) {
+        return mobileCurrentIndex;
+      }
+      const normalizedRotation = ((-currentRotation % 360) + 360) % 360;
+      const index = Math.round(normalizedRotation / theta) % totalCards;
+      return index;
     };
 
-    // Update active states based on current rotation
+    // Update active states
     const updateActiveStates = () => {
-        const currentIndex = getCurrentIndex();
+      const currentIndex = getCurrentIndex();
 
-        cards.forEach((card, index) => {
-            card.classList.toggle('is-active', index === currentIndex);
-        });
+      reviewCards.forEach((card, index) => {
+        card.classList.toggle('is-active', index === currentIndex);
+      });
 
-        indicators.forEach((indicator, index) => {
-            indicator.classList.toggle('is-active', index === currentIndex);
-        });
+      indicators.forEach((indicator, index) => {
+        indicator.classList.toggle('is-active', index === currentIndex);
+      });
     };
 
-    // Snap to specific slide (used by buttons and indicators)
+    // Snap to specific slide
     const snapToSlide = (targetIndex) => {
-        if (isMobileView()) {
-            // In mobile view, just update the index
-            mobileCurrentIndex = targetIndex;
-            updateActiveStates();
-            return;
-        }
+      if (isMobileView()) {
+        mobileCurrentIndex = targetIndex;
+        updateActiveStates();
+        return;
+      }
 
-        isAutoRotating = false;
-        rotationVelocity = 0;
+      isAutoRotating = false;
+      rotationVelocity = 0;
 
-        // Clear any existing pause timeout
-        if (pauseTimeout) {
-            clearTimeout(pauseTimeout);
-            pauseTimeout = null;
-        }
+      if (pauseTimeout) {
+        clearTimeout(pauseTimeout);
+        pauseTimeout = null;
+      }
 
-        // Calculate the exact rotation needed to center the target card
-        // We want the carousel at exactly -targetIndex * theta
-        const desiredRotation = -targetIndex * theta;
+      const desiredRotation = -targetIndex * theta;
+      const currentNormalized = currentRotation % 360;
+      const desiredNormalized = desiredRotation % 360;
 
-        // Find the closest equivalent rotation to current position
-        // (accounting for the fact that rotation is continuous/infinite)
-        const currentNormalized = currentRotation % 360;
-        const desiredNormalized = desiredRotation % 360;
+      let diff = desiredNormalized - currentNormalized;
+      if (diff > 180) {
+        diff -= 360;
+      } else if (diff < -180) {
+        diff += 360;
+      }
 
-        // Calculate shortest path
-        let diff = desiredNormalized - currentNormalized;
-        if (diff > 180) {
-            diff -= 360;
-        } else if (diff < -180) {
-            diff += 360;
-        }
-
-        targetRotation = currentRotation + diff;
+      targetRotation = currentRotation + diff;
     };
 
     // Animation loop
     const animate = () => {
-        if (isMobileView()) {
-            // Mobile view doesn't use 3D transforms, just update active states
-            // Ensure carousel transform is cleared
-            carousel.style.transform = 'none';
-            updateActiveStates();
-            requestAnimationFrame(animate);
-            return;
-        }
-
-        // Auto-rotation (smooth continuous)
-        if (isAutoRotating && !isUserInteracting) {
-            currentRotation -= autoRotationSpeed;
-        }
-
-        // Handle snapping to target (for button clicks)
-        if (!isAutoRotating && Math.abs(targetRotation - currentRotation) > 0.1) {
-            currentRotation += (targetRotation - currentRotation) * snapStrength;
-        } else if (!isAutoRotating && Math.abs(targetRotation - currentRotation) <= 0.1) {
-            currentRotation = targetRotation;
-            // Start pause timer when snap completes (only if not already set)
-            if (!pauseTimeout) {
-                pauseTimeout = setTimeout(() => {
-                    if (!isUserInteracting) {
-                        isAutoRotating = true;
-                    }
-                    pauseTimeout = null;
-                }, 1000);
-            }
-        }
-
-        // Apply velocity with friction (for momentum after swipe)
-        if (Math.abs(rotationVelocity) > 0.01) {
-            currentRotation += rotationVelocity;
-            rotationVelocity *= friction;
-        } else if (!isAutoRotating) {
-            rotationVelocity = 0;
-        }
-
-        // Apply rotation
-        const radius = getRadius();
-        carousel.style.transform = `translateZ(-${radius}px) rotateY(${currentRotation}deg)`;
-
+      if (isMobileView()) {
+        carousel.style.transform = 'none';
         updateActiveStates();
         requestAnimationFrame(animate);
+        return;
+      }
+
+      if (isAutoRotating && !isUserInteracting) {
+        currentRotation -= autoRotationSpeed;
+      }
+
+      if (!isAutoRotating && Math.abs(targetRotation - currentRotation) > 0.1) {
+        currentRotation += (targetRotation - currentRotation) * snapStrength;
+      } else if (!isAutoRotating && Math.abs(targetRotation - currentRotation) <= 0.1) {
+        currentRotation = targetRotation;
+        if (!pauseTimeout) {
+          pauseTimeout = setTimeout(() => {
+            if (!isUserInteracting) {
+              isAutoRotating = true;
+            }
+            pauseTimeout = null;
+          }, 1000);
+        }
+      }
+
+      if (Math.abs(rotationVelocity) > 0.01) {
+        currentRotation += rotationVelocity;
+        rotationVelocity *= friction;
+      } else if (!isAutoRotating) {
+        rotationVelocity = 0;
+      }
+
+      const radius = getRadius();
+      carousel.style.transform = `translateZ(-${radius}px) rotateY(${currentRotation}deg)`;
+
+      updateActiveStates();
+      requestAnimationFrame(animate);
     };
 
     // Button navigation
     prevBtn.addEventListener('click', () => {
-        const currentIndex = getCurrentIndex();
-        snapToSlide((currentIndex - 1 + totalCards) % totalCards);
+      const currentIndex = getCurrentIndex();
+      snapToSlide((currentIndex - 1 + totalCards) % totalCards);
     });
 
     nextBtn.addEventListener('click', () => {
-        const currentIndex = getCurrentIndex();
-        snapToSlide((currentIndex + 1) % totalCards);
+      const currentIndex = getCurrentIndex();
+      snapToSlide((currentIndex + 1) % totalCards);
     });
 
-    // Prevent horizontal touch dragging on carousel while allowing vertical scrolling
+    // Touch events
     const carouselScene = document.querySelector('.carousel-scene');
     let touchStartX = 0;
     let touchStartY = 0;
 
     carouselScene.addEventListener('touchstart', (e) => {
-        touchStartX = e.touches[0].clientX;
-        touchStartY = e.touches[0].clientY;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
     }, { passive: true });
 
     carouselScene.addEventListener('touchmove', (e) => {
-        const touchMoveX = e.touches[0].clientX;
-        const touchMoveY = e.touches[0].clientY;
-        const deltaX = Math.abs(touchMoveX - touchStartX);
-        const deltaY = Math.abs(touchMoveY - touchStartY);
+      const touchMoveX = e.touches[0].clientX;
+      const touchMoveY = e.touches[0].clientY;
+      const deltaX = Math.abs(touchMoveX - touchStartX);
+      const deltaY = Math.abs(touchMoveY - touchStartY);
 
-        // If horizontal movement is greater than vertical, prevent default (block horizontal drag)
-        // Otherwise allow vertical scrolling
-        if (deltaX > deltaY) {
-            e.preventDefault();
-        }
+      if (deltaX > deltaY) {
+        e.preventDefault();
+      }
     }, { passive: false });
 
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft') {
-            const currentIndex = getCurrentIndex();
-            snapToSlide((currentIndex + 1) % totalCards);
-        } else if (e.key === 'ArrowRight') {
-            const currentIndex = getCurrentIndex();
-            snapToSlide((currentIndex - 1 + totalCards) % totalCards);
-        }
+      if (e.key === 'ArrowLeft') {
+        const currentIndex = getCurrentIndex();
+        snapToSlide((currentIndex + 1) % totalCards);
+      } else if (e.key === 'ArrowRight') {
+        const currentIndex = getCurrentIndex();
+        snapToSlide((currentIndex - 1 + totalCards) % totalCards);
+      }
     });
 
     // Handle resize
@@ -356,42 +310,622 @@ const initCarousel = () => {
     let previousMobileState = isMobileView();
 
     window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            const currentMobileState = isMobileView();
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        const currentMobileState = isMobileView();
 
-            // If switching between mobile and desktop views
-            if (previousMobileState !== currentMobileState) {
-                if (currentMobileState) {
-                    // Switching to mobile view
-                    // Set mobile index to match current desktop rotation
-                    mobileCurrentIndex = getCurrentIndex();
-                    // Reset rotation state
-                    currentRotation = 0;
-                    targetRotation = 0;
-                    rotationVelocity = 0;
-                    isAutoRotating = true;
-                } else {
-                    // Switching to desktop view
-                    // Set rotation to match current mobile index
-                    currentRotation = -mobileCurrentIndex * theta;
-                    targetRotation = currentRotation;
-                    rotationVelocity = 0;
-                    isAutoRotating = true;
-                }
-                previousMobileState = currentMobileState;
-            }
+        if (previousMobileState !== currentMobileState) {
+          if (currentMobileState) {
+            mobileCurrentIndex = getCurrentIndex();
+            currentRotation = 0;
+            targetRotation = 0;
+            rotationVelocity = 0;
+            isAutoRotating = true;
+          } else {
+            currentRotation = -mobileCurrentIndex * theta;
+            targetRotation = currentRotation;
+            rotationVelocity = 0;
+            isAutoRotating = true;
+          }
+          previousMobileState = currentMobileState;
+        }
 
-            positionCards();
-            updateActiveStates();
-        }, 100);
+        positionCards();
+        updateActiveStates();
+      }, 100);
     });
 
     // Initialize
     positionCards();
     animate();
-};
+  };
 
-// Add this to the end of your existing DOMContentLoaded callback
-initCarousel();
+  // ===========================================
+  // INFINITE GALLERY CAROUSEL
+  // ===========================================
+  
+  // Gallery images configuration - 5 images per category
+  const GALLERY_IMAGES = {
+    coupes: [
+      './gtr.jpeg',
+      './gtr.jpeg',
+      './gtr.jpeg',
+      './gtr.jpeg',
+      './gtr.jpeg'
+    ],
+    sedans: [
+      './charger.webp',
+      './charger.webp',
+      './charger.webp',
+      './charger.webp',
+      './charger.webp'
+    ],
+    suvs: [
+      './urus.jpg',
+      './urus.jpg',
+      './urus.jpg',
+      './urus.jpg',
+      './urus.jpg'
+    ],
+    trucks: [
+      './trx.jpg',
+      './trx.jpg',
+      './trx.jpg',
+      './trx.jpg',
+      './trx.jpg'
+    ]
+  };
+
+  // Gallery Carousel Class
+  class GalleryCarousel {
+    constructor(container, images) {
+      this.container = container;
+      this.images = images;
+      this.stage = container.querySelector('.gallery-stage');
+      this.cardsRoot = container.querySelector('.gallery-cards');
+      this.prevBtn = container.querySelector('.gallery-nav-prev');
+      this.nextBtn = container.querySelector('.gallery-nav-next');
+      
+      // Physics constants
+      this.FRICTION = 0.9;
+      this.WHEEL_SENS = 0.6;
+      this.DRAG_SENS = 1.0;
+      
+      // Visual constants
+      this.MAX_ROTATION = 28;
+      this.MAX_DEPTH = 140;
+      this.MIN_SCALE = 0.92;
+      this.SCALE_RANGE = 0.1;
+      this.GAP = 28;
+      
+      // State
+      this.items = [];
+      this.positions = [];
+      this.activeIndex = -1;
+      this.CARD_W = 300;
+      this.CARD_H = 400;
+      this.STEP = this.CARD_W + this.GAP;
+      this.TRACK = 0;
+      this.SCROLL_X = 0;
+      this.VW_HALF = window.innerWidth * 0.5;
+      this.vX = 0;
+      this.rafId = null;
+      this.lastTime = 0;
+      this.isActive = false;
+      this.isInitialized = false;
+      
+      // Drag state
+      this.dragging = false;
+      this.lastX = 0;
+      this.lastT = 0;
+      this.lastDelta = 0;
+      
+      // Bind methods
+      this.tick = this.tick.bind(this);
+      this.onWheel = this.onWheel.bind(this);
+      this.onPointerDown = this.onPointerDown.bind(this);
+      this.onPointerMove = this.onPointerMove.bind(this);
+      this.onPointerUp = this.onPointerUp.bind(this);
+      this.onResize = this.onResize.bind(this);
+    }
+    
+    mod(n, m) {
+      return ((n % m) + m) % m;
+    }
+    
+    createCards() {
+      this.cardsRoot.innerHTML = '';
+      this.items = [];
+      
+      const fragment = document.createDocumentFragment();
+      
+      this.images.forEach((src, i) => {
+        const card = document.createElement('article');
+        card.className = 'gallery-card';
+        card.style.willChange = 'transform';
+        
+        const img = new Image();
+        img.className = 'gallery-card__img';
+        img.decoding = 'async';
+        img.loading = 'eager';
+        img.draggable = false;
+        img.src = src;
+        img.alt = `Gallery image ${i + 1}`;
+        
+        card.appendChild(img);
+        fragment.appendChild(card);
+        this.items.push({ el: card, x: i * this.STEP });
+      });
+      
+      this.cardsRoot.appendChild(fragment);
+    }
+    
+    measure() {
+      const sample = this.items[0]?.el;
+      if (!sample) return;
+      
+      const r = sample.getBoundingClientRect();
+      this.CARD_W = r.width || this.CARD_W;
+      this.CARD_H = r.height || this.CARD_H;
+      this.STEP = this.CARD_W + this.GAP;
+      this.TRACK = this.items.length * this.STEP;
+      
+      this.items.forEach((it, i) => {
+        it.x = i * this.STEP;
+      });
+      
+      this.positions = new Float32Array(this.items.length);
+    }
+    
+    computeTransformComponents(screenX) {
+      const norm = Math.max(-1, Math.min(1, screenX / this.VW_HALF));
+      const absNorm = Math.abs(norm);
+      const invNorm = 1 - absNorm;
+      
+      const ry = -norm * this.MAX_ROTATION;
+      const tz = invNorm * this.MAX_DEPTH;
+      const scale = this.MIN_SCALE + invNorm * this.SCALE_RANGE;
+      
+      return { norm, absNorm, invNorm, ry, tz, scale };
+    }
+    
+    transformForScreenX(screenX) {
+      const { ry, tz, scale } = this.computeTransformComponents(screenX);
+
+      // Offset by half card width because CSS left: 50% positions the left edge at center
+      const offsetX = screenX - (this.CARD_W / 2);
+
+      return {
+        transform: `translate3d(${offsetX}px,-50%,${tz}px) rotateY(${ry}deg) scale(${scale})`,
+        z: tz
+      };
+    }
+    
+    updateTransforms() {
+      const half = this.TRACK / 2;
+      let closestIdx = -1;
+      let closestDist = Infinity;
+      
+      // Calculate wrapped positions
+      for (let i = 0; i < this.items.length; i++) {
+        let pos = this.items[i].x - this.SCROLL_X;
+        
+        if (pos < -half) pos += this.TRACK;
+        if (pos > half) pos -= this.TRACK;
+        
+        this.positions[i] = pos;
+        
+        const dist = Math.abs(pos);
+        if (dist < closestDist) {
+          closestDist = dist;
+          closestIdx = i;
+        }
+      }
+      
+      // Get adjacent cards for selective blur
+      const prevIdx = (closestIdx - 1 + this.items.length) % this.items.length;
+      const nextIdx = (closestIdx + 1) % this.items.length;
+      
+      // Apply transforms
+      for (let i = 0; i < this.items.length; i++) {
+        const it = this.items[i];
+        const pos = this.positions[i];
+        const norm = Math.max(-1, Math.min(1, pos / this.VW_HALF));
+        const { transform, z } = this.transformForScreenX(pos);
+        
+        it.el.style.transform = transform;
+        it.el.style.zIndex = String(1000 + Math.round(z));
+        
+        // Apply graduated blur: center=0, neighbors=half, outer=full
+        let blur = 0;
+        if (i === closestIdx) {
+          blur = 0; // Center card has no blur
+        } else if (i === prevIdx || i === nextIdx) {
+          blur = 1 * Math.pow(Math.abs(norm), 1.1); // Adjacent cards get half intensity
+        } else {
+          blur = 2 * Math.pow(Math.abs(norm), 1.1); // Outer cards get full intensity
+        }
+        it.el.style.filter = `blur(${blur.toFixed(2)}px)`;
+        
+        // Update active class
+        it.el.classList.toggle('is-active', i === closestIdx);
+      }
+      
+      this.activeIndex = closestIdx;
+    }
+    
+    tick(t) {
+      if (!this.isActive) return;
+      
+      const dt = this.lastTime ? (t - this.lastTime) / 1000 : 0;
+      this.lastTime = t;
+      
+      // Apply velocity
+      this.SCROLL_X = this.mod(this.SCROLL_X + this.vX * dt, this.TRACK);
+      
+      // Apply friction
+      const decay = Math.pow(this.FRICTION, dt * 60);
+      this.vX *= decay;
+      if (Math.abs(this.vX) < 0.02) this.vX = 0;
+      
+      this.updateTransforms();
+      this.rafId = requestAnimationFrame(this.tick);
+    }
+    
+    start() {
+      if (this.isActive) return;
+      this.isActive = true;
+      this.lastTime = 0;
+      this.rafId = requestAnimationFrame((t) => {
+        this.updateTransforms();
+        this.tick(t);
+      });
+      this.addEventListeners();
+    }
+    
+    stop() {
+      this.isActive = false;
+      if (this.rafId) {
+        cancelAnimationFrame(this.rafId);
+        this.rafId = null;
+      }
+      this.removeEventListeners();
+    }
+    
+    onWheel(e) {
+      e.preventDefault();
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      this.vX += delta * this.WHEEL_SENS * 20;
+    }
+    
+    onPointerDown(e) {
+      if (e.target.closest('.gallery-nav-btn')) return;
+      
+      this.dragging = true;
+      this.lastX = e.clientX;
+      this.lastT = performance.now();
+      this.lastDelta = 0;
+      this.stage.setPointerCapture(e.pointerId);
+      this.stage.classList.add('dragging');
+    }
+    
+    onPointerMove(e) {
+      if (!this.dragging) return;
+      
+      const now = performance.now();
+      const dx = e.clientX - this.lastX;
+      const dt = Math.max(1, now - this.lastT) / 1000;
+      
+      this.SCROLL_X = this.mod(this.SCROLL_X - dx * this.DRAG_SENS, this.TRACK);
+      this.lastDelta = dx / dt;
+      this.lastX = e.clientX;
+      this.lastT = now;
+    }
+    
+    onPointerUp(e) {
+      if (!this.dragging) return;
+      this.dragging = false;
+      this.stage.releasePointerCapture(e.pointerId);
+      this.vX = -this.lastDelta * this.DRAG_SENS;
+      this.stage.classList.remove('dragging');
+    }
+    
+    onResize() {
+      const prevStep = this.STEP || 1;
+      const ratio = this.SCROLL_X / (this.items.length * prevStep);
+      this.measure();
+      this.VW_HALF = window.innerWidth * 0.5;
+      this.SCROLL_X = this.mod(ratio * this.TRACK, this.TRACK);
+      if (this.isActive) {
+        this.updateTransforms();
+      }
+    }
+    
+    addEventListeners() {
+      this.stage.addEventListener('wheel', this.onWheel, { passive: false });
+      this.stage.addEventListener('pointerdown', this.onPointerDown);
+      this.stage.addEventListener('pointermove', this.onPointerMove);
+      this.stage.addEventListener('pointerup', this.onPointerUp);
+      this.stage.addEventListener('pointercancel', this.onPointerUp);
+      this.stage.addEventListener('dragstart', (e) => e.preventDefault());
+      
+      // Navigation buttons
+      this.prevBtn.addEventListener('click', () => this.navigatePrev());
+      this.nextBtn.addEventListener('click', () => this.navigateNext());
+    }
+    
+    removeEventListeners() {
+      this.stage.removeEventListener('wheel', this.onWheel);
+      this.stage.removeEventListener('pointerdown', this.onPointerDown);
+      this.stage.removeEventListener('pointermove', this.onPointerMove);
+      this.stage.removeEventListener('pointerup', this.onPointerUp);
+      this.stage.removeEventListener('pointercancel', this.onPointerUp);
+    }
+    
+    navigatePrev() {
+      // Snap to previous card
+      const targetIndex = (this.activeIndex - 1 + this.items.length) % this.items.length;
+      this.snapToCard(targetIndex);
+    }
+
+    navigateNext() {
+      // Snap to next card
+      const targetIndex = (this.activeIndex + 1) % this.items.length;
+      this.snapToCard(targetIndex);
+    }
+
+    snapToCard(targetIndex) {
+      // Calculate target scroll position for the card
+      const targetScrollX = this.items[targetIndex].x;
+
+      // Animate to target position
+      const startScroll = this.SCROLL_X;
+      const startTime = performance.now();
+      const duration = 600; // ms
+
+      const animate = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+
+        // Easing function (ease-out cubic)
+        const eased = 1 - Math.pow(1 - progress, 3);
+
+        // Calculate shortest path (handle wrapping)
+        let diff = targetScrollX - startScroll;
+        const halfTrack = this.TRACK / 2;
+
+        if (diff > halfTrack) {
+          diff -= this.TRACK;
+        } else if (diff < -halfTrack) {
+          diff += this.TRACK;
+        }
+
+        this.SCROLL_X = this.mod(startScroll + diff * eased, this.TRACK);
+        this.vX = 0; // Cancel any velocity
+
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+
+      requestAnimationFrame(animate);
+    }
+    
+    async init() {
+      if (this.isInitialized) return;
+      
+      this.createCards();
+      
+      // Wait for images to load
+      await this.waitForImages();
+      
+      this.measure();
+      this.updateTransforms();
+      this.isInitialized = true;
+      
+      // Animate entry with GSAP if available
+      if (window.gsap) {
+        await this.animateEntry();
+      }
+    }
+    
+    waitForImages() {
+      const promises = this.items.map((it) => {
+        const img = it.el.querySelector('img');
+        if (!img || img.complete) return Promise.resolve();
+        
+        return new Promise((resolve) => {
+          const done = () => resolve();
+          img.addEventListener('load', done, { once: true });
+          img.addEventListener('error', done, { once: true });
+        });
+      });
+      
+      return Promise.all(promises);
+    }
+    
+    async animateEntry() {
+      const half = this.TRACK / 2;
+      const viewportWidth = window.innerWidth;
+      const visibleCards = [];
+      
+      for (let i = 0; i < this.items.length; i++) {
+        let pos = this.items[i].x - this.SCROLL_X;
+        if (pos < -half) pos += this.TRACK;
+        if (pos > half) pos -= this.TRACK;
+        
+        if (Math.abs(pos) < viewportWidth * 0.7) {
+          visibleCards.push({ item: this.items[i], screenX: pos, index: i });
+        }
+      }
+      
+      visibleCards.sort((a, b) => a.screenX - b.screenX);
+      
+      const tl = window.gsap.timeline();
+      
+      visibleCards.forEach(({ item, screenX }, idx) => {
+        const state = { p: 0 };
+        const { ry, tz, scale: baseScale } = this.computeTransformComponents(screenX);
+
+        // Offset by half card width to match transformForScreenX
+        const offsetX = screenX - (this.CARD_W / 2);
+
+        const START_SCALE = 0.85;
+        const START_Y = 60;
+
+        item.el.style.opacity = '0';
+        item.el.style.transform =
+          `translate3d(${offsetX}px,-50%,${tz}px) ` +
+          `rotateY(${ry}deg) ` +
+          `scale(${START_SCALE}) ` +
+          `translateY(${START_Y}px)`;
+
+        tl.to(
+          state,
+          {
+            p: 1,
+            duration: 0.5,
+            ease: 'power3.out',
+            onUpdate: () => {
+              const t = state.p;
+              const currentScale = START_SCALE + (baseScale - START_SCALE) * t;
+              const currentY = START_Y * (1 - t);
+
+              item.el.style.opacity = t.toFixed(3);
+
+              if (t >= 0.999) {
+                const { transform } = this.transformForScreenX(screenX);
+                item.el.style.transform = transform;
+              } else {
+                item.el.style.transform =
+                  `translate3d(${offsetX}px,-50%,${tz}px) ` +
+                  `rotateY(${ry}deg) ` +
+                  `scale(${currentScale}) ` +
+                  `translateY(${currentY}px)`;
+              }
+            }
+          },
+          idx * 0.08
+        );
+      });
+      
+      return new Promise((resolve) => {
+        tl.eventCallback('onComplete', resolve);
+      });
+    }
+  }
+  
+  // ===========================================
+  // GALLERY TAB MANAGEMENT
+  // ===========================================
+  
+  const galleryCarousels = {};
+  let activeCarousel = null;
+  
+  // Initialize gallery carousels
+  const initGalleryCarousels = async () => {
+    const containers = document.querySelectorAll('.gallery-carousel-container');
+    
+    containers.forEach((container) => {
+      const category = container.dataset.category;
+      const images = GALLERY_IMAGES[category];
+      
+      if (images) {
+        galleryCarousels[category] = new GalleryCarousel(container, images);
+      }
+    });
+    
+    // Initialize and start the first (active) carousel
+    const firstCategory = 'coupes';
+    if (galleryCarousels[firstCategory]) {
+      await galleryCarousels[firstCategory].init();
+      galleryCarousels[firstCategory].start();
+      activeCarousel = galleryCarousels[firstCategory];
+    }
+    
+    // Handle resize for all carousels
+    let resizeTimeout;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        Object.values(galleryCarousels).forEach(carousel => {
+          if (carousel.isInitialized) {
+            carousel.onResize();
+          }
+        });
+      }, 100);
+    });
+  };
+  
+  // Tab switching
+  const tabs = document.querySelectorAll('#gallery .tabs li');
+  const categoryContainers = {
+    'coupes': document.querySelector('.gallery-carousel-container.coupes'),
+    'sedans': document.querySelector('.gallery-carousel-container.sedans'),
+    'suvs': document.querySelector('.gallery-carousel-container.suvs'),
+    'trucks': document.querySelector('.gallery-carousel-container.trucks')
+  };
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      // Remove active class from all tabs
+      tabs.forEach(t => t.classList.remove('is-active'));
+
+      // Add active class to clicked tab
+      tab.classList.add('is-active');
+
+      // Get the category name from the data attribute
+      const categoryName = tab.dataset.category;
+
+      // Stop current carousel
+      if (activeCarousel) {
+        activeCarousel.stop();
+      }
+
+      // Hide all category containers
+      Object.values(categoryContainers).forEach(container => {
+        if (container) container.classList.add('is-hidden');
+      });
+
+      // Show the selected category container
+      if (categoryContainers[categoryName]) {
+        categoryContainers[categoryName].classList.remove('is-hidden');
+        
+        // Initialize carousel if not already done
+        const carousel = galleryCarousels[categoryName];
+        if (carousel) {
+          if (!carousel.isInitialized) {
+            await carousel.init();
+          }
+          carousel.start();
+          activeCarousel = carousel;
+        }
+      }
+    });
+  });
+  
+  // Pause carousels when tab is hidden
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (activeCarousel) {
+        activeCarousel.stop();
+      }
+    } else {
+      if (activeCarousel && activeCarousel.isInitialized) {
+        activeCarousel.start();
+      }
+    }
+  });
+
+  // ===========================================
+  // INITIALIZATION
+  // ===========================================
+  
+  // Initialize review carousel
+  initReviewCarousel();
+  
+  // Initialize gallery carousels
+  initGalleryCarousels();
 });

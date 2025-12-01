@@ -66,7 +66,6 @@
     </section>
 
     <!-- Reviews Section -->
-<!-- Reviews Section -->
 <section id="reviews" class="section">
     <div class="container">
         <h2 class="title is-2">Reviews</h2>
@@ -187,50 +186,33 @@
                 <div class="column is-4">
                     <div class="card is-flex is-flex-direction-column">
                         <div class="card-content is-flex is-flex-direction-column is-flex-grow-1">
-                            <h3 class="title is-4">Platinum</h3>
-                            <p><b>EXTERIOR</b></p>
+                            <h3 id="express" class="title is-4">Express Exterior</h3>
                             <ul class="content">
                                 <li>Hand wash</li>
-                                <li>Tire/wheel cleaning & apply tire shine</li>
-                                <li>Streak free glass</li>
-                                <li>Fuel cap</li>
-                                <li>Door/trunk jambs</li>
-                                <li>Bug removal</li>
-                                <li>Paint sealant</li>
-                            </ul>
-                            <p><b>INTERIOR</b></p>
-                            <ul class="content">
-                                <li>Thorough vacuum of interior & trunk</li>
-                                <li>All plastic, vinyl, and rubber (crevices) get steamed & UV protection</li>
-                                <li>Leather steamed & conditioned</li>
-                                <li>Seats/carpets & floor mats get steamed and shampooed</li>
+                                <li>Windows & door jambs cleaned</li>
+                                <li>Wheels & tires deep cleaned</li>
+                                <li>Tires & trim conditioned</li>
                             </ul>
                             <br>
-                            <h5 class="title is-6 mt-auto">💵 Starting at <b>$285</b></h5>
+                            <h5 class="title is-6 mt-auto">💵 Starting at <b>$75</b></h5>
                         </div>
                     </div>
                 </div>
                 <div class="column is-4">
                     <div class="card is-flex is-flex-direction-column">
                         <div class="card-content is-flex is-flex-direction-column is-flex-grow-1">
-                            <h3 class="title is-4">Gold</h3>
-                            <p><b>EXTERIOR</b></p>
+                            <h3 class="title is-4">Standard Exterior</h3>
                             <ul class="content">
                                 <li>Hand wash</li>
-                                <li>Tire/wheel cleaning & apply tire shine</li>
-                                <li>Streak free glass</li>
-                                <li>Fuel cap</li>
-                                <li>Door/trunk jambs</li>
-                                <li>Bug removal</li>
-                            </ul>
-                            <p><b>INTERIOR</b></p>
-                            <ul class="content">
-                                <li>Thorough vacuum of interior & trunk</li>
-                                <li>All plastic, vinyl, and rubber get a wipe down & UV protection</li>
-                                <li>Leather seats get a wipe down & conditioned</li>
+                                <li>Windows & door jambs cleaned</li>
+                                <li>Decontamination of wheels</li>
+                                <li>Wheels & tires deep cleaned</li>
+                                <li>Tires & trim conditioned</li>
+                                <li>Iron removal treatment</li>
+                                <li>6-month spray sealant</li>
                             </ul>
                             <br>
-                            <h5 class="title is-6 mt-auto">💵 Starting at <b>$200</b></h5>
+                            <h5 class="title is-6 mt-auto">💵 Starting at <b>$130</b></h5>
                         </div>
                     </div>
                 </div>
@@ -296,50 +278,70 @@
             <h2 class="title is-2">Gallery</h2>
             <div class="tabs is-centered pb-4">
                 <ul>
-                    <li class="is-active"><a>Coupes</a></li>
-                    <li><a>Sedans</a></li>
-                    <li><a>SUVs</a></li>
-                    <li><a>Trucks</a></li>
+                    <li class="is-active" data-category="coupes"><a>Coupes</a></li>
+                    <li data-category="sedans"><a>Sedans</a></li>
+                    <li data-category="suvs"><a>SUVs</a></li>
+                    <li data-category="trucks"><a>Trucks</a></li>
                 </ul>
             </div>
-            <div class="coupes">
-                <div class="columns is-multiline">
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="gtr.jpeg" class="gallery-image">
-                    </div>
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="gtr.jpeg" class="gallery-image">
-                    </div>
+            
+            <!-- Coupes Carousel -->
+            <div class="gallery-carousel-container coupes" data-category="coupes">
+                <div class="gallery-stage" aria-label="Coupes gallery carousel">
+                    <section class="gallery-cards"></section>
+                </div>
+                <div class="gallery-nav">
+                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
+                        <span>‹</span>
+                    </button>
+                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
+                        <span>›</span>
+                    </button>
                 </div>
             </div>
-            <div class="is-hidden sedans">
-                <div class="columns is-multiline">
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="charger.webp" class="gallery-image">
-                    </div>
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="charger.webp" class="gallery-image">
-                    </div>
+            
+            <!-- Sedans Carousel -->
+            <div class="gallery-carousel-container sedans is-hidden" data-category="sedans">
+                <div class="gallery-stage" aria-label="Sedans gallery carousel">
+                    <section class="gallery-cards"></section>
+                </div>
+                <div class="gallery-nav">
+                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
+                        <span>‹</span>
+                    </button>
+                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
+                        <span>›</span>
+                    </button>
                 </div>
             </div>
-            <div class="is-hidden suvs">
-                <div class="columns is-multiline">
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="urus.jpg" class="gallery-image">
-                    </div>
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="urus.jpg" class="gallery-image">
-                    </div>
+            
+            <!-- SUVs Carousel -->
+            <div class="gallery-carousel-container suvs is-hidden" data-category="suvs">
+                <div class="gallery-stage" aria-label="SUVs gallery carousel">
+                    <section class="gallery-cards"></section>
+                </div>
+                <div class="gallery-nav">
+                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
+                        <span>‹</span>
+                    </button>
+                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
+                        <span>›</span>
+                    </button>
                 </div>
             </div>
-            <div class="is-hidden trucks">
-                <div class="columns is-multiline">
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="trx.jpg" class="gallery-image">
-                    </div>
-                    <div class="column is-full-mobile is-half-tablet is-one-third-fullhd">
-                        <img src="trx.jpg" class="gallery-image">
-                    </div>
+            
+            <!-- Trucks Carousel -->
+            <div class="gallery-carousel-container trucks is-hidden" data-category="trucks">
+                <div class="gallery-stage" aria-label="Trucks gallery carousel">
+                    <section class="gallery-cards"></section>
+                </div>
+                <div class="gallery-nav">
+                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
+                        <span>‹</span>
+                    </button>
+                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
+                        <span>›</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -391,12 +393,13 @@
     <footer class="footer is-flex is-align-items-center is-justify-content-center mb-0 has-background-black">
         <div class="content has-text-centered">
             <p class="is-size-7">
-                © 2025 Mr. Xtractor ▷ <a href=mailto:yaser@creadevdesign.com><u>CreaDev Design</u></a>
+                © 2025 Mr. Xtractor ▷ <a href="/cdn-cgi/l/email-protection#8bf2eaf8eef9cbe8f9eeeaefeefdefeef8e2ece5a5e8e4e6"><u>CreaDev Design</u></a>
             </p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- GSAP for smooth animations -->
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="./script.js"></script>
 </body>
-
 </html>
