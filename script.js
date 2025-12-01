@@ -133,7 +133,6 @@ const initCarousel = () => {
     let rotationVelocity = 0;
     let isAutoRotating = true;
     let isUserInteracting = false;
-    let isHovering = false;
     let pauseTimeout = null;
     let mobileCurrentIndex = 0; // Track current index in mobile view
 
@@ -142,7 +141,7 @@ const initCarousel = () => {
 
     // Physics constants
     const friction = 0.95; // Velocity decay
-    const snapStrength = 0.2; // How fast buttons snap to position
+    const snapStrength = 0.05; // How fast buttons snap to position
 
     // Get card width dynamically
     const getCardWidth = () => cards[0].offsetWidth;
@@ -281,9 +280,9 @@ const initCarousel = () => {
         } else if (!isAutoRotating && Math.abs(targetRotation - currentRotation) <= 0.1) {
             currentRotation = targetRotation;
             // Start pause timer when snap completes (only if not already set)
-            if (!pauseTimeout && !isHovering) {
+            if (!pauseTimeout) {
                 pauseTimeout = setTimeout(() => {
-                    if (!isUserInteracting && !isHovering) {
+                    if (!isUserInteracting) {
                         isAutoRotating = true;
                     }
                     pauseTimeout = null;
@@ -318,22 +317,8 @@ const initCarousel = () => {
         snapToSlide((currentIndex + 1) % totalCards);
     });
 
-    // Pause on hover (desktop only)
-    const carouselScene = document.querySelector('.carousel-scene');
-    carouselScene.addEventListener('mouseenter', () => {
-        isHovering = true;
-        isAutoRotating = false;
-        rotationVelocity = 0;
-    });
-
-    carouselScene.addEventListener('mouseleave', () => {
-        isHovering = false;
-        if (!isUserInteracting) {
-            isAutoRotating = true;
-        }
-    });
-
     // Prevent horizontal touch dragging on carousel while allowing vertical scrolling
+    const carouselScene = document.querySelector('.carousel-scene');
     let touchStartX = 0;
     let touchStartY = 0;
 

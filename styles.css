@@ -21569,6 +21569,13 @@ has-background-danger.is-hoverable:active {
   background-color: transparent;
 }
 
+.navbar-item:nth-child(7) {
+  color: #E20408;
+}
+.navbar-item:nth-child(7):hover {
+  color: white;
+}
+
 .navbar-item {
   color: white;
   font-size: 20px;

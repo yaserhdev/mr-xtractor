@@ -26,6 +26,14 @@ $xl: 1200px;
   background-color: transparent;
 }
 
+.navbar-item:nth-child(7) {
+  color: $red;
+
+  &:hover {
+    color: white;
+  }
+}
+
 .navbar-item {
   color: white;
   font-size: 20px;
