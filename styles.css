@@ -21565,9 +21565,16 @@ has-background-danger.is-hoverable:active {
   width: auto;
 }
 
+.navbar-brand .navbar-item:hover {
+  background-color: transparent;
+}
+
 .navbar-item {
   color: white;
   font-size: 20px;
+}
+.navbar-item:hover {
+  background-color: #E20408;
 }
 
 #express,
@@ -21589,19 +21596,38 @@ has-background-danger.is-hoverable:active {
 }
 
 #home {
+  padding: 0;
+  margin: 0;
+  background: #000;
+}
+
+#home .hero-body {
+  aspect-ratio: 1920/738;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+#home .hero-body .container {
   background-image: url("./banner.jpg");
   background-position: center;
   background-repeat: no-repeat;
   background-size: contain;
-  aspect-ratio: 1920/738;
-  padding: 0;
-  margin: 0;
-}
-
-#home .hero-body {
+  width: 100%;
   height: 100%;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+#home .hero-body .container > * {
+  position: relative;
+  z-index: 1;
 }
 
 .title span:first-child {
@@ -21656,10 +21682,20 @@ has-background-danger.is-hoverable:active {
     text-underline-offset: 7.5px;
   }
 }
+@media (max-width: 799px) {
+  #home .hero-body .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
 section .title.is-2 {
   position: relative;
   padding-bottom: 15px;
   margin-bottom: 30px;
+}
+
+section#reviews .title.is-2 {
+  margin-bottom: 15px;
 }
 
 section .title.is-2::after {

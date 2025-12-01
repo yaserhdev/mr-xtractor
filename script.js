@@ -1,13 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-  document.addEventListener('DOMContentLoaded', () => {
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-    $navbarBurgers.forEach(el => {
-      el.addEventListener('click', () => {
-        const target = el.dataset.target;
-        const $target = document.getElementById(target);
-        el.classList.toggle('is-active');
-        $target.classList.toggle('is-active');
-      });
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+  $navbarBurgers.forEach(el => {
+    el.addEventListener('click', () => {
+      const target = el.dataset.target;
+      const $target = document.getElementById(target);
+      el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
     });
   });
 
@@ -135,6 +133,8 @@ const initCarousel = () => {
     // Position cards in 3D space
     const positionCards = () => {
         if (isMobileView()) {
+            // Clear all transforms for mobile view
+            carousel.style.transform = 'none';
             cards.forEach(card => {
                 card.style.transform = 'none';
             });
@@ -214,6 +214,8 @@ const initCarousel = () => {
     const animate = () => {
         if (isMobileView()) {
             // Mobile view doesn't use 3D transforms, just update active states
+            // Ensure carousel transform is cleared
+            carousel.style.transform = 'none';
             updateActiveStates();
             requestAnimationFrame(animate);
             return;
@@ -317,10 +319,37 @@ const initCarousel = () => {
 
     // Handle resize
     let resizeTimeout;
+    let previousMobileState = isMobileView();
+
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
+            const currentMobileState = isMobileView();
+
+            // If switching between mobile and desktop views
+            if (previousMobileState !== currentMobileState) {
+                if (currentMobileState) {
+                    // Switching to mobile view
+                    // Set mobile index to match current desktop rotation
+                    mobileCurrentIndex = getCurrentIndex();
+                    // Reset rotation state
+                    currentRotation = 0;
+                    targetRotation = 0;
+                    rotationVelocity = 0;
+                    isAutoRotating = true;
+                } else {
+                    // Switching to desktop view
+                    // Set rotation to match current mobile index
+                    currentRotation = -mobileCurrentIndex * theta;
+                    targetRotation = currentRotation;
+                    rotationVelocity = 0;
+                    isAutoRotating = true;
+                }
+                previousMobileState = currentMobileState;
+            }
+
             positionCards();
+            updateActiveStates();
         }, 100);
     });
 
