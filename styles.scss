@@ -245,6 +245,13 @@ html {
     }
 }
 
+// Services section - 2 columns at 600-800px breakpoint
+@media (min-width: $small) and (max-width: 799px) {
+    #services .column.is-4 {
+        width: 50%;
+    }
+}
+
 // ===========================================
 // 3D REVIEW CAROUSEL STYLES
 // ===========================================
