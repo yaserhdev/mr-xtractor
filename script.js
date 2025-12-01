@@ -1,11 +1,60 @@
 document.addEventListener('DOMContentLoaded', () => {
   const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
   $navbarBurgers.forEach(el => {
     el.addEventListener('click', () => {
       const target = el.dataset.target;
       const $target = document.getElementById(target);
       el.classList.toggle('is-active');
       $target.classList.toggle('is-active');
+
+      // Adjust body padding when mobile menu opens/closes
+      if ($target.classList.contains('is-active')) {
+        const menuHeight = $target.offsetHeight;
+        const totalHeight = `calc(3.25rem + ${menuHeight}px)`;
+        document.body.style.paddingTop = totalHeight;
+      } else {
+        document.body.style.paddingTop = '3.25rem';
+      }
+    });
+  });
+
+  // Close mobile menu when a nav link is clicked
+  const navbarMenu = document.getElementById('navbarMenu');
+  const navbarLinks = document.querySelectorAll('#navbarMenu .navbar-item');
+
+  navbarLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+      if (navbarMenu.classList.contains('is-active')) {
+        // Prevent default navigation
+        e.preventDefault();
+
+        // Get the target section
+        const targetId = link.getAttribute('href');
+        const targetSection = document.querySelector(targetId);
+
+        if (targetSection) {
+          // Calculate target position BEFORE closing menu and changing padding
+          const navbarHeight = document.querySelector('.navbar').offsetHeight;
+          const targetOffsetTop = targetSection.offsetTop;
+
+          // Close the menu
+          navbarMenu.classList.remove('is-active');
+          const burger = document.querySelector('.navbar-burger');
+          if (burger) {
+            burger.classList.remove('is-active');
+          }
+
+          // Reset body padding
+          document.body.style.paddingTop = '3.25rem';
+
+          // Scroll to the calculated position
+          window.scrollTo({
+            top: targetOffsetTop - navbarHeight,
+            behavior: 'smooth'
+          });
+        }
+      }
     });
   });
 

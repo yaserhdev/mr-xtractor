@@ -21740,6 +21740,22 @@ section .title.is-2::after {
   margin-top: 30px;
 }
 
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+body {
+  padding-top: 3.25rem;
+  transition: padding-top 0.3s ease;
+}
+
+html {
+  scroll-padding-top: 3.25rem;
+}
+
 .footer {
   margin-top: auto;
   padding: 0.5rem 1.5rem;
