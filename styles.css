@@ -21595,7 +21595,7 @@ has-background-danger.is-hoverable:active {
 
 #home {
   padding: 0;
-  margin: 0;
+  margin: 15 0 0 0;
   background: #000;
 }
 
@@ -22070,7 +22070,6 @@ html {
   object-fit: cover;
   display: block;
   transform: translateZ(0);
-  pointer-events: none;
   -webkit-user-drag: none;
   user-select: none;
 }
@@ -22169,6 +22168,133 @@ html {
   .gallery-card {
     transition: none !important;
     animation: none !important;
+  }
+}
+.gallery-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.gallery-fullscreen-overlay.active {
+  opacity: 1;
+}
+.gallery-fullscreen-overlay.closing {
+  opacity: 0;
+}
+
+.gallery-fullscreen-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-fullscreen-image {
+  max-width: 100%;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+}
+
+.gallery-fullscreen-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: rgba(226, 4, 8, 0.8);
+  color: white;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+.gallery-fullscreen-close span {
+  margin-top: -3px;
+}
+.gallery-fullscreen-close:hover {
+  background: #E20408;
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(226, 4, 8, 0.6);
+}
+.gallery-fullscreen-close:active {
+  transform: scale(0.95);
+}
+
+@media (max-width: 600px) {
+  .gallery-fullscreen-close {
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.75rem;
+  }
+  .gallery-fullscreen-content {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+}
+#book-now {
+  padding: 4rem 1.5rem;
+}
+#book-now .title.is-2 {
+  color: white;
+}
+#book-now .booking-form-container {
+  max-width: 900px;
+  margin: 0 auto;
+  background: transparent;
+}
+#book-now .booking-form-container iframe {
+  display: block;
+  border: none !important;
+  outline: none !important;
+  min-height: 900px;
+  background: transparent;
+}
+
+@media screen and (max-width: 800px) {
+  #book-now {
+    padding: 3rem 1.5rem;
+  }
+  #book-now .booking-form-container iframe {
+    min-height: 1000px;
+  }
+}
+@media screen and (max-width: 600px) {
+  #book-now {
+    padding: 2.5rem 1rem;
+  }
+  #book-now .booking-form-container {
+    border-radius: 8px;
+  }
+  #book-now .booking-form-container iframe {
+    min-height: 1100px;
+  }
+}
+@media screen and (max-width: 480px) {
+  #book-now {
+    padding: 2rem 0.75rem;
+  }
+  #book-now .booking-form-container iframe {
+    min-height: 1200px;
   }
 }
 

@@ -419,6 +419,8 @@ document.addEventListener('DOMContentLoaded', () => {
       this.lastX = 0;
       this.lastT = 0;
       this.lastDelta = 0;
+      this.dragStartX = 0;
+      this.hasDragged = false;
       
       // Bind methods
       this.tick = this.tick.bind(this);
@@ -443,7 +445,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('article');
         card.className = 'gallery-card';
         card.style.willChange = 'transform';
-        
+        card.dataset.index = i;
+
         const img = new Image();
         img.className = 'gallery-card__img';
         img.decoding = 'async';
@@ -451,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
         img.draggable = false;
         img.src = src;
         img.alt = `Gallery image ${i + 1}`;
-        
+
         card.appendChild(img);
         fragment.appendChild(card);
         this.items.push({ el: card, x: i * this.STEP });
@@ -600,22 +603,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     onPointerDown(e) {
       if (e.target.closest('.gallery-nav-btn')) return;
-      
+
       this.dragging = true;
       this.lastX = e.clientX;
+      this.dragStartX = e.clientX;
       this.lastT = performance.now();
       this.lastDelta = 0;
+      this.hasDragged = false;
       this.stage.setPointerCapture(e.pointerId);
       this.stage.classList.add('dragging');
     }
     
     onPointerMove(e) {
       if (!this.dragging) return;
-      
+
       const now = performance.now();
       const dx = e.clientX - this.lastX;
       const dt = Math.max(1, now - this.lastT) / 1000;
-      
+
+      // Mark as dragged if moved more than 5 pixels from start
+      if (Math.abs(e.clientX - this.dragStartX) > 5) {
+        this.hasDragged = true;
+      }
+
       this.SCROLL_X = this.mod(this.SCROLL_X - dx * this.DRAG_SENS, this.TRACK);
       this.lastDelta = dx / dt;
       this.lastX = e.clientX;
@@ -642,13 +652,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     addEventListeners() {
+      // Click handler for fullscreen (only active card) - FIRST
+      this.stage.addEventListener('click', (e) => this.onCardClick(e), true);
+
       this.stage.addEventListener('wheel', this.onWheel, { passive: false });
       this.stage.addEventListener('pointerdown', this.onPointerDown);
       this.stage.addEventListener('pointermove', this.onPointerMove);
       this.stage.addEventListener('pointerup', this.onPointerUp);
       this.stage.addEventListener('pointercancel', this.onPointerUp);
       this.stage.addEventListener('dragstart', (e) => e.preventDefault());
-      
+
       // Navigation buttons
       this.prevBtn.addEventListener('click', () => this.navigatePrev());
       this.nextBtn.addEventListener('click', () => this.navigateNext());
@@ -709,6 +722,76 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       requestAnimationFrame(animate);
+    }
+
+    onCardClick(e) {
+      // Ignore if user was dragging (moved more than 5px)
+      if (this.hasDragged) return;
+
+      // Find which card was clicked
+      const clickedCard = e.target.closest('.gallery-card');
+      if (!clickedCard) return;
+
+      // Get the index of the clicked card
+      const clickedIndex = parseInt(clickedCard.dataset.index);
+
+      // Only open fullscreen if it's the active (center) card
+      if (clickedIndex === this.activeIndex) {
+        const img = clickedCard.querySelector('img');
+        if (img) {
+          this.openFullscreen(img.src, img.alt);
+        }
+      }
+    }
+
+    openFullscreen(imgSrc, imgAlt) {
+      // Create fullscreen overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'gallery-fullscreen-overlay';
+      overlay.innerHTML = `
+        <div class="gallery-fullscreen-content">
+          <button class="gallery-fullscreen-close" aria-label="Close fullscreen">
+            <span>&times;</span>
+          </button>
+          <img src="${imgSrc}" alt="${imgAlt}" class="gallery-fullscreen-image">
+        </div>
+      `;
+
+      document.body.appendChild(overlay);
+      document.body.style.overflow = 'hidden';
+
+      // Close handlers
+      const closeFullscreen = () => {
+        overlay.classList.add('closing');
+        setTimeout(() => {
+          overlay.remove();
+          document.body.style.overflow = '';
+        }, 300);
+      };
+
+      // Close button
+      overlay.querySelector('.gallery-fullscreen-close').addEventListener('click', closeFullscreen);
+
+      // Click outside image
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          closeFullscreen();
+        }
+      });
+
+      // ESC key
+      const handleEsc = (e) => {
+        if (e.key === 'Escape') {
+          closeFullscreen();
+          document.removeEventListener('keydown', handleEsc);
+        }
+      };
+      document.addEventListener('keydown', handleEsc);
+
+      // Fade in animation
+      requestAnimationFrame(() => {
+        overlay.classList.add('active');
+      });
     }
     
     async init() {
