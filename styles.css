@@ -22190,6 +22190,25 @@ html {
 .gallery-fullscreen-overlay.closing {
   opacity: 0;
 }
+.gallery-fullscreen-overlay:fullscreen, .gallery-fullscreen-overlay:-webkit-full-screen, .gallery-fullscreen-overlay:-moz-full-screen, .gallery-fullscreen-overlay:-ms-fullscreen {
+  background: #000;
+}
+.gallery-fullscreen-overlay:fullscreen .gallery-fullscreen-content, .gallery-fullscreen-overlay:-webkit-full-screen .gallery-fullscreen-content, .gallery-fullscreen-overlay:-moz-full-screen .gallery-fullscreen-content, .gallery-fullscreen-overlay:-ms-fullscreen .gallery-fullscreen-content {
+  max-width: 100vw;
+  max-height: 100vh;
+  width: 100%;
+  height: 100%;
+}
+.gallery-fullscreen-overlay:fullscreen .gallery-fullscreen-image, .gallery-fullscreen-overlay:-webkit-full-screen .gallery-fullscreen-image, .gallery-fullscreen-overlay:-moz-full-screen .gallery-fullscreen-image, .gallery-fullscreen-overlay:-ms-fullscreen .gallery-fullscreen-image {
+  max-width: 100%;
+  max-height: 100vh;
+  width: auto;
+  height: auto;
+}
+.gallery-fullscreen-overlay:fullscreen .gallery-fullscreen-close, .gallery-fullscreen-overlay:-webkit-full-screen .gallery-fullscreen-close, .gallery-fullscreen-overlay:-moz-full-screen .gallery-fullscreen-close, .gallery-fullscreen-overlay:-ms-fullscreen .gallery-fullscreen-close {
+  top: 20px;
+  right: 20px;
+}
 
 .gallery-fullscreen-content {
   position: relative;
@@ -22206,6 +22225,8 @@ html {
   object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9);
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .gallery-fullscreen-close {
@@ -22225,6 +22246,7 @@ html {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  z-index: 10000;
 }
 .gallery-fullscreen-close span {
   margin-top: -3px;
@@ -22249,6 +22271,9 @@ html {
   .gallery-fullscreen-content {
     max-width: 95vw;
     max-height: 95vh;
+  }
+  .gallery-fullscreen-image {
+    border-radius: 0;
   }
 }
 #book-now h2 {

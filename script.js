@@ -381,12 +381,9 @@ document.addEventListener('DOMContentLoaded', () => {
       this.isActive = false;
       this.isInitialized = false;
       
-      this.dragging = false;
-      this.lastX = 0;
-      this.lastT = 0;
-      this.lastDelta = 0;
-      this.dragStartX = 0;
-      this.hasDragged = false;
+      this.clickStartX = 0;
+      this.clickStartY = 0;
+      this.clickStartTime = 0;
       
       this.isSnapping = false;
       this.snapStartTime = 0;
@@ -396,10 +393,8 @@ document.addEventListener('DOMContentLoaded', () => {
       this.tick = this.tick.bind(this);
       this.onWheel = this.onWheel.bind(this);
       this.onPointerDown = this.onPointerDown.bind(this);
-      this.onPointerMove = this.onPointerMove.bind(this);
       this.onPointerUp = this.onPointerUp.bind(this);
       this.onResize = this.onResize.bind(this);
-      this.onCardClick = this.onCardClick.bind(this);
     }
     
     mod(n, m) {
@@ -603,7 +598,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const decay = Math.pow(this.FRICTION, dt * 60);
         this.vX *= decay;
         
-        if (Math.abs(this.vX) < this.SNAP_THRESHOLD && !this.dragging) {
+        // Trigger snap when velocity gets low enough
+        if (Math.abs(this.vX) < this.SNAP_THRESHOLD) {
           this.vX = 0;
           this.snapToClosest();
         }
@@ -641,46 +637,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     onPointerDown(e) {
+      // Only used to detect clicks now
       if (e.target.closest('.gallery-nav-btn')) return;
-
-      this.dragging = true;
-      this.isSnapping = false;
-      this.lastX = e.clientX;
-      this.dragStartX = e.clientX;
-      this.lastT = performance.now();
-      this.lastDelta = 0;
-      this.hasDragged = false;
-      this.stage.setPointerCapture(e.pointerId);
-      this.stage.classList.add('dragging');
-    }
-    
-    onPointerMove(e) {
-      if (!this.dragging) return;
-
-      const now = performance.now();
-      const dx = e.clientX - this.lastX;
-      const dt = Math.max(1, now - this.lastT) / 1000;
-
-      if (Math.abs(e.clientX - this.dragStartX) > 5) {
-        this.hasDragged = true;
-      }
-
-      this.SCROLL_X = this.mod(this.SCROLL_X - dx * this.DRAG_SENS, this.TRACK);
-      this.lastDelta = dx / dt;
-      this.lastX = e.clientX;
-      this.lastT = now;
+      
+      this.clickStartX = e.clientX;
+      this.clickStartY = e.clientY;
+      this.clickStartTime = Date.now();
     }
     
     onPointerUp(e) {
-      if (!this.dragging) return;
-      this.dragging = false;
-      this.stage.releasePointerCapture(e.pointerId);
-      this.vX = -this.lastDelta * this.DRAG_SENS;
-      this.stage.classList.remove('dragging');
+      // Simple click detection
+      const duration = Date.now() - this.clickStartTime;
+      const distX = Math.abs(e.clientX - this.clickStartX);
+      const distY = Math.abs(e.clientY - this.clickStartY);
       
-      if (Math.abs(this.vX) < this.SNAP_THRESHOLD * 10) {
-        this.vX = 0;
-        this.snapToClosest();
+      // It's a click if quick and didn't move
+      const isClick = duration < 300 && distX < 10 && distY < 10;
+      
+      if (isClick) {
+        const clickedCard = e.target.closest('.gallery-card');
+        if (clickedCard) {
+          const clickedIndex = parseInt(clickedCard.dataset.index);
+          if (!isNaN(clickedIndex)) {
+            if (clickedIndex === this.activeIndex) {
+              // Center card - open fullscreen
+              const img = clickedCard.querySelector('img');
+              if (img && img.src) {
+                this.openFullscreen(img.src, img.alt || '');
+              }
+            } else {
+              // Side card - navigate to it
+              this.snapToCard(clickedIndex);
+            }
+          }
+        }
       }
     }
     
@@ -696,30 +686,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     onCardClick(e) {
-      if (this.hasDragged) return;
+      // Don't process click if user was dragging
+      if (this.hasDragged) {
+        return;
+      }
 
       const clickedCard = e.target.closest('.gallery-card');
       if (!clickedCard) return;
 
       const clickedIndex = parseInt(clickedCard.dataset.index);
+      if (isNaN(clickedIndex)) return;
 
+      // Center card - open fullscreen
       if (clickedIndex === this.activeIndex) {
+        e.preventDefault();
+        e.stopPropagation();
         const img = clickedCard.querySelector('img');
-        if (img) {
-          this.openFullscreen(img.src, img.alt);
+        if (img && img.src) {
+          this.openFullscreen(img.src, img.alt || '');
         }
       } else {
+        // Side card - navigate to it
+        e.preventDefault();
         this.snapToCard(clickedIndex);
       }
     }
     
     addEventListeners() {
-      this.stage.addEventListener('click', this.onCardClick, true);
       this.stage.addEventListener('wheel', this.onWheel, { passive: false });
       this.stage.addEventListener('pointerdown', this.onPointerDown);
-      this.stage.addEventListener('pointermove', this.onPointerMove);
       this.stage.addEventListener('pointerup', this.onPointerUp);
-      this.stage.addEventListener('pointercancel', this.onPointerUp);
       this.stage.addEventListener('dragstart', (e) => e.preventDefault());
 
       this.prevBtn.addEventListener('click', () => this.navigatePrev());
@@ -727,12 +723,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     removeEventListeners() {
-      this.stage.removeEventListener('click', this.onCardClick, true);
       this.stage.removeEventListener('wheel', this.onWheel);
       this.stage.removeEventListener('pointerdown', this.onPointerDown);
-      this.stage.removeEventListener('pointermove', this.onPointerMove);
       this.stage.removeEventListener('pointerup', this.onPointerUp);
-      this.stage.removeEventListener('pointercancel', this.onPointerUp);
     }
     
     navigatePrev() {
@@ -745,7 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
       this.snapToCard(targetIndex);
     }
 
-    openFullscreen(imgSrc, imgAlt) {
+    async openFullscreen(imgSrc, imgAlt) {
       const overlay = document.createElement('div');
       overlay.className = 'gallery-fullscreen-overlay';
       overlay.innerHTML = `
@@ -760,7 +753,37 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(overlay);
       document.body.style.overflow = 'hidden';
 
-      const closeFullscreen = () => {
+      // Request native fullscreen on mobile/tablet
+      try {
+        if (overlay.requestFullscreen) {
+          await overlay.requestFullscreen();
+        } else if (overlay.webkitRequestFullscreen) {
+          await overlay.webkitRequestFullscreen();
+        } else if (overlay.msRequestFullscreen) {
+          await overlay.msRequestFullscreen();
+        }
+      } catch (error) {
+        // Fullscreen not available, lightbox still works
+        console.log('Fullscreen not available');
+      }
+
+      // Close lightbox function
+      const closeFullscreen = async () => {
+        // Exit fullscreen if active
+        try {
+          if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+            if (document.exitFullscreen) {
+              await document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+              await document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+              await document.msExitFullscreen();
+            }
+          }
+        } catch (error) {
+          console.log('Exit fullscreen error');
+        }
+
         overlay.classList.add('closing');
         setTimeout(() => {
           overlay.remove();
@@ -768,22 +791,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
       };
 
+      // Close button
       overlay.querySelector('.gallery-fullscreen-close').addEventListener('click', closeFullscreen);
 
+      // Click outside image
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
           closeFullscreen();
         }
       });
 
+      // ESC key
       const handleEsc = (e) => {
-        if (e.key === 'Escape') {
+        if (e.key === 'Escape' && overlay.parentNode) {
           closeFullscreen();
           document.removeEventListener('keydown', handleEsc);
         }
       };
       document.addEventListener('keydown', handleEsc);
 
+      // Handle fullscreen change (user exits fullscreen via device button)
+      const handleFullscreenChange = () => {
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+          if (overlay.parentNode) {
+            closeFullscreen();
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.removeEventListener('msfullscreenchange', handleFullscreenChange);
+          }
+        }
+      };
+      
+      document.addEventListener('fullscreenchange', handleFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+      document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+      // Fade in animation
       requestAnimationFrame(() => {
         overlay.classList.add('active');
       });
