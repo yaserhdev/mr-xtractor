@@ -21738,6 +21738,48 @@ section .title.is-2::after {
   margin-top: 30px;
 }
 
+.about-section .title.is-2 {
+  margin-bottom: 2rem;
+}
+.about-section .columns {
+  align-items: center;
+}
+
+.about-image-column .about-image-wrapper img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.about-image-column .about-image-wrapper .about-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: white;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.about-text-column .about-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #BFBFBF;
+}
+
+@media (max-width: 600px) {
+  .about-section .columns {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .about-section .about-image-column {
+    margin-top: 2rem;
+  }
+  .about-section .about-image-column .about-image-wrapper {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+  .about-section .about-text-column .about-text {
+    font-size: 1rem;
+  }
+}
 .navbar {
   position: fixed;
   top: 0;

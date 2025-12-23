@@ -213,6 +213,71 @@ section .title.is-2::after {
   margin-top: 30px;
 }
 
+// ===========================================
+// ABOUT SECTION STYLES
+// ===========================================
+
+.about-section {
+  .title.is-2 {
+    margin-bottom: 2rem;
+  }
+  
+  .columns {
+    align-items: center; // Center both columns vertically relative to each other
+  }
+}
+
+.about-image-column {
+  .about-image-wrapper {
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    
+    .about-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: white;
+      margin-top: 1rem;
+      text-align: center;
+    }
+  }
+}
+
+.about-text-column {
+  .about-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #BFBFBF;
+  }
+}
+
+// Mobile stacking below 600px - text first, then image
+@media (max-width: 600px) {
+  .about-section {
+    .columns {
+      display: flex;
+      flex-direction: column-reverse;
+    }
+    
+    .about-image-column {
+      margin-top: 2rem;
+      
+      .about-image-wrapper {
+        max-width: 300px;
+        margin: 0 auto;
+      }
+    }
+    
+    .about-text-column {
+      .about-text {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
 .navbar {
   position: fixed;
   top: 0;
