@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
       el.classList.toggle('is-active');
       $target.classList.toggle('is-active');
 
-      // Adjust body padding when mobile menu opens/closes
       if ($target.classList.contains('is-active')) {
         const menuHeight = $target.offsetHeight;
         const totalHeight = `calc(3.25rem + ${menuHeight}px)`;
@@ -22,36 +21,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Close mobile menu when a nav link is clicked
   const navbarMenu = document.getElementById('navbarMenu');
   const navbarLinks = document.querySelectorAll('#navbarMenu .navbar-item');
 
   navbarLinks.forEach(link => {
     link.addEventListener('click', (e) => {
       if (navbarMenu.classList.contains('is-active')) {
-        // Prevent default navigation
         e.preventDefault();
-
-        // Get the target section
         const targetId = link.getAttribute('href');
         const targetSection = document.querySelector(targetId);
 
         if (targetSection) {
-          // Calculate target position BEFORE closing menu and changing padding
           const navbarHeight = document.querySelector('.navbar').offsetHeight;
           const targetOffsetTop = targetSection.offsetTop;
 
-          // Close the menu
           navbarMenu.classList.remove('is-active');
           const burger = document.querySelector('.navbar-burger');
           if (burger) {
             burger.classList.remove('is-active');
           }
 
-          // Reset body padding
           document.body.style.paddingTop = '3.25rem';
 
-          // Scroll to the calculated position
           window.scrollTo({
             top: targetOffsetTop - navbarHeight,
             behavior: 'smooth'
@@ -85,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ===========================================
-  // 3D REVIEW CAROUSEL (EXISTING - UNCHANGED)
+  // 3D REVIEW CAROUSEL (UNCHANGED)
   // ===========================================
   const initReviewCarousel = () => {
     const carousel = document.querySelector('.carousel');
@@ -100,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const theta = 360 / totalCards;
     const mobileBreakpoint = 650;
 
-    // Rotation state
     let currentRotation = 0;
     let targetRotation = 0;
     let rotationVelocity = 0;
@@ -109,27 +99,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let pauseTimeout = null;
     let mobileCurrentIndex = 0;
 
-    // Auto-rotation speed
     const autoRotationSpeed = 0.05;
-
-    // Physics constants
     const friction = 0.95;
     const snapStrength = 0.05;
 
-    // Get card width dynamically
     const getCardWidth = () => reviewCards[0].offsetWidth;
-
-    // Check if mobile view
     const isMobileView = () => window.innerWidth <= mobileBreakpoint;
-
-    // Get gap based on viewport width
     const getCardGap = () => {
       if (window.innerWidth <= 800) return 20;
       else if (window.innerWidth <= 1000) return 25;
       return 30;
     };
 
-    // Calculate radius
     const getRadius = () => {
       if (isMobileView()) return 0;
       const cardWidth = getCardWidth();
@@ -139,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return Math.round(baseRadius + gapAdjustment);
     };
 
-    // Create indicator dots
     reviewCards.forEach((_, index) => {
       const indicator = document.createElement('button');
       indicator.classList.add('carousel-indicator');
@@ -151,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const indicators = document.querySelectorAll('.carousel-indicator');
 
-    // Position cards in 3D space
     const positionCards = () => {
       if (isMobileView()) {
         carousel.style.transform = 'none';
@@ -168,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
 
-    // Get current active card index
     const getCurrentIndex = () => {
       if (isMobileView()) {
         return mobileCurrentIndex;
@@ -178,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
       return index;
     };
 
-    // Update active states
     const updateActiveStates = () => {
       const currentIndex = getCurrentIndex();
 
@@ -191,7 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     };
 
-    // Snap to specific slide
     const snapToSlide = (targetIndex) => {
       if (isMobileView()) {
         mobileCurrentIndex = targetIndex;
@@ -221,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
       targetRotation = currentRotation + diff;
     };
 
-    // Animation loop
     const animate = () => {
       if (isMobileView()) {
         carousel.style.transform = 'none';
@@ -262,7 +237,6 @@ document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(animate);
     };
 
-    // Button navigation
     prevBtn.addEventListener('click', () => {
       const currentIndex = getCurrentIndex();
       snapToSlide((currentIndex - 1 + totalCards) % totalCards);
@@ -273,7 +247,6 @@ document.addEventListener('DOMContentLoaded', () => {
       snapToSlide((currentIndex + 1) % totalCards);
     });
 
-    // Touch events
     const carouselScene = document.querySelector('.carousel-scene');
     let touchStartX = 0;
     let touchStartY = 0;
@@ -294,7 +267,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }, { passive: false });
 
-    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (e.key === 'ArrowLeft') {
         const currentIndex = getCurrentIndex();
@@ -305,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 
-    // Handle resize
     let resizeTimeout;
     let previousMobileState = isMobileView();
 
@@ -335,7 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 100);
     });
 
-    // Initialize
     positionCards();
     animate();
   };
@@ -344,7 +314,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // INFINITE GALLERY CAROUSEL
   // ===========================================
   
-  // Gallery images configuration - 5 images per category
   const GALLERY_IMAGES = {
     coupes: [
       './gtr.jpeg',
@@ -376,7 +345,6 @@ document.addEventListener('DOMContentLoaded', () => {
     ]
   };
 
-  // Gallery Carousel Class
   class GalleryCarousel {
     constructor(container, images) {
       this.container = container;
@@ -386,19 +354,18 @@ document.addEventListener('DOMContentLoaded', () => {
       this.prevBtn = container.querySelector('.gallery-nav-prev');
       this.nextBtn = container.querySelector('.gallery-nav-next');
       
-      // Physics constants
       this.FRICTION = 0.9;
       this.WHEEL_SENS = 0.6;
       this.DRAG_SENS = 1.0;
+      this.SNAP_THRESHOLD = 0.5;
+      this.SNAP_DURATION = 400;
       
-      // Visual constants
       this.MAX_ROTATION = 28;
       this.MAX_DEPTH = 140;
       this.MIN_SCALE = 0.92;
       this.SCALE_RANGE = 0.1;
       this.GAP = 28;
       
-      // State
       this.items = [];
       this.positions = [];
       this.activeIndex = -1;
@@ -414,7 +381,6 @@ document.addEventListener('DOMContentLoaded', () => {
       this.isActive = false;
       this.isInitialized = false;
       
-      // Drag state
       this.dragging = false;
       this.lastX = 0;
       this.lastT = 0;
@@ -422,13 +388,18 @@ document.addEventListener('DOMContentLoaded', () => {
       this.dragStartX = 0;
       this.hasDragged = false;
       
-      // Bind methods
+      this.isSnapping = false;
+      this.snapStartTime = 0;
+      this.snapStartScroll = 0;
+      this.snapTargetScroll = 0;
+      
       this.tick = this.tick.bind(this);
       this.onWheel = this.onWheel.bind(this);
       this.onPointerDown = this.onPointerDown.bind(this);
       this.onPointerMove = this.onPointerMove.bind(this);
       this.onPointerUp = this.onPointerUp.bind(this);
       this.onResize = this.onResize.bind(this);
+      this.onCardClick = this.onCardClick.bind(this);
     }
     
     mod(n, m) {
@@ -445,6 +416,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const card = document.createElement('article');
         card.className = 'gallery-card';
         card.style.willChange = 'transform';
+        card.style.cursor = 'pointer';
         card.dataset.index = i;
 
         const img = new Image();
@@ -494,8 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     transformForScreenX(screenX) {
       const { ry, tz, scale } = this.computeTransformComponents(screenX);
-
-      // Offset by half card width because CSS left: 50% positions the left edge at center
       const offsetX = screenX - (this.CARD_W / 2);
 
       return {
@@ -509,7 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
       let closestIdx = -1;
       let closestDist = Infinity;
       
-      // Calculate wrapped positions
       for (let i = 0; i < this.items.length; i++) {
         let pos = this.items[i].x - this.SCROLL_X;
         
@@ -525,11 +494,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       
-      // Get adjacent cards for selective blur
       const prevIdx = (closestIdx - 1 + this.items.length) % this.items.length;
       const nextIdx = (closestIdx + 1) % this.items.length;
       
-      // Apply transforms
       for (let i = 0; i < this.items.length; i++) {
         const it = this.items[i];
         const pos = this.positions[i];
@@ -539,22 +506,68 @@ document.addEventListener('DOMContentLoaded', () => {
         it.el.style.transform = transform;
         it.el.style.zIndex = String(1000 + Math.round(z));
         
-        // Apply graduated blur: center=0, neighbors=half, outer=full
         let blur = 0;
         if (i === closestIdx) {
-          blur = 0; // Center card has no blur
+          blur = 0;
         } else if (i === prevIdx || i === nextIdx) {
-          blur = 1 * Math.pow(Math.abs(norm), 1.1); // Adjacent cards get half intensity
+          blur = 1 * Math.pow(Math.abs(norm), 1.1);
         } else {
-          blur = 2 * Math.pow(Math.abs(norm), 1.1); // Outer cards get full intensity
+          blur = 2 * Math.pow(Math.abs(norm), 1.1);
         }
         it.el.style.filter = `blur(${blur.toFixed(2)}px)`;
         
-        // Update active class
         it.el.classList.toggle('is-active', i === closestIdx);
       }
       
       this.activeIndex = closestIdx;
+    }
+    
+    snapToClosest() {
+      if (this.isSnapping) return;
+      
+      const targetIndex = this.activeIndex;
+      const targetScrollX = this.items[targetIndex].x;
+      
+      let diff = targetScrollX - this.SCROLL_X;
+      const halfTrack = this.TRACK / 2;
+      
+      if (diff > halfTrack) {
+        diff -= this.TRACK;
+      } else if (diff < -halfTrack) {
+        diff += this.TRACK;
+      }
+      
+      if (Math.abs(diff) < 1) {
+        this.SCROLL_X = targetScrollX;
+        return;
+      }
+      
+      this.isSnapping = true;
+      this.snapStartTime = performance.now();
+      this.snapStartScroll = this.SCROLL_X;
+      this.snapTargetScroll = this.mod(this.SCROLL_X + diff, this.TRACK);
+      this.vX = 0;
+    }
+    
+    snapToCard(targetIndex) {
+      if (this.isSnapping) return;
+      
+      const targetScrollX = this.items[targetIndex].x;
+      
+      let diff = targetScrollX - this.SCROLL_X;
+      const halfTrack = this.TRACK / 2;
+      
+      if (diff > halfTrack) {
+        diff -= this.TRACK;
+      } else if (diff < -halfTrack) {
+        diff += this.TRACK;
+      }
+      
+      this.isSnapping = true;
+      this.snapStartTime = performance.now();
+      this.snapStartScroll = this.SCROLL_X;
+      this.snapTargetScroll = this.mod(this.SCROLL_X + diff, this.TRACK);
+      this.vX = 0;
     }
     
     tick(t) {
@@ -563,13 +576,38 @@ document.addEventListener('DOMContentLoaded', () => {
       const dt = this.lastTime ? (t - this.lastTime) / 1000 : 0;
       this.lastTime = t;
       
-      // Apply velocity
-      this.SCROLL_X = this.mod(this.SCROLL_X + this.vX * dt, this.TRACK);
-      
-      // Apply friction
-      const decay = Math.pow(this.FRICTION, dt * 60);
-      this.vX *= decay;
-      if (Math.abs(this.vX) < 0.02) this.vX = 0;
+      if (this.isSnapping) {
+        const elapsed = performance.now() - this.snapStartTime;
+        const progress = Math.min(elapsed / this.SNAP_DURATION, 1);
+        
+        const eased = 1 - Math.pow(1 - progress, 3);
+        
+        let diff = this.snapTargetScroll - this.snapStartScroll;
+        const halfTrack = this.TRACK / 2;
+        
+        if (diff > halfTrack) {
+          diff -= this.TRACK;
+        } else if (diff < -halfTrack) {
+          diff += this.TRACK;
+        }
+        
+        this.SCROLL_X = this.mod(this.snapStartScroll + diff * eased, this.TRACK);
+        
+        if (progress >= 1) {
+          this.SCROLL_X = this.snapTargetScroll;
+          this.isSnapping = false;
+        }
+      } else {
+        this.SCROLL_X = this.mod(this.SCROLL_X + this.vX * dt, this.TRACK);
+        
+        const decay = Math.pow(this.FRICTION, dt * 60);
+        this.vX *= decay;
+        
+        if (Math.abs(this.vX) < this.SNAP_THRESHOLD && !this.dragging) {
+          this.vX = 0;
+          this.snapToClosest();
+        }
+      }
       
       this.updateTransforms();
       this.rafId = requestAnimationFrame(this.tick);
@@ -597,6 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     onWheel(e) {
       e.preventDefault();
+      this.isSnapping = false;
       const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
       this.vX += delta * this.WHEEL_SENS * 20;
     }
@@ -605,6 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.target.closest('.gallery-nav-btn')) return;
 
       this.dragging = true;
+      this.isSnapping = false;
       this.lastX = e.clientX;
       this.dragStartX = e.clientX;
       this.lastT = performance.now();
@@ -621,7 +661,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const dx = e.clientX - this.lastX;
       const dt = Math.max(1, now - this.lastT) / 1000;
 
-      // Mark as dragged if moved more than 5 pixels from start
       if (Math.abs(e.clientX - this.dragStartX) > 5) {
         this.hasDragged = true;
       }
@@ -638,6 +677,11 @@ document.addEventListener('DOMContentLoaded', () => {
       this.stage.releasePointerCapture(e.pointerId);
       this.vX = -this.lastDelta * this.DRAG_SENS;
       this.stage.classList.remove('dragging');
+      
+      if (Math.abs(this.vX) < this.SNAP_THRESHOLD * 10) {
+        this.vX = 0;
+        this.snapToClosest();
+      }
     }
     
     onResize() {
@@ -651,10 +695,26 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
     
-    addEventListeners() {
-      // Click handler for fullscreen (only active card) - FIRST
-      this.stage.addEventListener('click', (e) => this.onCardClick(e), true);
+    onCardClick(e) {
+      if (this.hasDragged) return;
 
+      const clickedCard = e.target.closest('.gallery-card');
+      if (!clickedCard) return;
+
+      const clickedIndex = parseInt(clickedCard.dataset.index);
+
+      if (clickedIndex === this.activeIndex) {
+        const img = clickedCard.querySelector('img');
+        if (img) {
+          this.openFullscreen(img.src, img.alt);
+        }
+      } else {
+        this.snapToCard(clickedIndex);
+      }
+    }
+    
+    addEventListeners() {
+      this.stage.addEventListener('click', this.onCardClick, true);
       this.stage.addEventListener('wheel', this.onWheel, { passive: false });
       this.stage.addEventListener('pointerdown', this.onPointerDown);
       this.stage.addEventListener('pointermove', this.onPointerMove);
@@ -662,12 +722,12 @@ document.addEventListener('DOMContentLoaded', () => {
       this.stage.addEventListener('pointercancel', this.onPointerUp);
       this.stage.addEventListener('dragstart', (e) => e.preventDefault());
 
-      // Navigation buttons
       this.prevBtn.addEventListener('click', () => this.navigatePrev());
       this.nextBtn.addEventListener('click', () => this.navigateNext());
     }
     
     removeEventListeners() {
+      this.stage.removeEventListener('click', this.onCardClick, true);
       this.stage.removeEventListener('wheel', this.onWheel);
       this.stage.removeEventListener('pointerdown', this.onPointerDown);
       this.stage.removeEventListener('pointermove', this.onPointerMove);
@@ -676,76 +736,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     navigatePrev() {
-      // Snap to previous card
       const targetIndex = (this.activeIndex - 1 + this.items.length) % this.items.length;
       this.snapToCard(targetIndex);
     }
 
     navigateNext() {
-      // Snap to next card
       const targetIndex = (this.activeIndex + 1) % this.items.length;
       this.snapToCard(targetIndex);
     }
 
-    snapToCard(targetIndex) {
-      // Calculate target scroll position for the card
-      const targetScrollX = this.items[targetIndex].x;
-
-      // Animate to target position
-      const startScroll = this.SCROLL_X;
-      const startTime = performance.now();
-      const duration = 600; // ms
-
-      const animate = (currentTime) => {
-        const elapsed = currentTime - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-
-        // Easing function (ease-out cubic)
-        const eased = 1 - Math.pow(1 - progress, 3);
-
-        // Calculate shortest path (handle wrapping)
-        let diff = targetScrollX - startScroll;
-        const halfTrack = this.TRACK / 2;
-
-        if (diff > halfTrack) {
-          diff -= this.TRACK;
-        } else if (diff < -halfTrack) {
-          diff += this.TRACK;
-        }
-
-        this.SCROLL_X = this.mod(startScroll + diff * eased, this.TRACK);
-        this.vX = 0; // Cancel any velocity
-
-        if (progress < 1) {
-          requestAnimationFrame(animate);
-        }
-      };
-
-      requestAnimationFrame(animate);
-    }
-
-    onCardClick(e) {
-      // Ignore if user was dragging (moved more than 5px)
-      if (this.hasDragged) return;
-
-      // Find which card was clicked
-      const clickedCard = e.target.closest('.gallery-card');
-      if (!clickedCard) return;
-
-      // Get the index of the clicked card
-      const clickedIndex = parseInt(clickedCard.dataset.index);
-
-      // Only open fullscreen if it's the active (center) card
-      if (clickedIndex === this.activeIndex) {
-        const img = clickedCard.querySelector('img');
-        if (img) {
-          this.openFullscreen(img.src, img.alt);
-        }
-      }
-    }
-
     openFullscreen(imgSrc, imgAlt) {
-      // Create fullscreen overlay
       const overlay = document.createElement('div');
       overlay.className = 'gallery-fullscreen-overlay';
       overlay.innerHTML = `
@@ -760,7 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.appendChild(overlay);
       document.body.style.overflow = 'hidden';
 
-      // Close handlers
       const closeFullscreen = () => {
         overlay.classList.add('closing');
         setTimeout(() => {
@@ -769,17 +768,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 300);
       };
 
-      // Close button
       overlay.querySelector('.gallery-fullscreen-close').addEventListener('click', closeFullscreen);
 
-      // Click outside image
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
           closeFullscreen();
         }
       });
 
-      // ESC key
       const handleEsc = (e) => {
         if (e.key === 'Escape') {
           closeFullscreen();
@@ -788,7 +784,6 @@ document.addEventListener('DOMContentLoaded', () => {
       };
       document.addEventListener('keydown', handleEsc);
 
-      // Fade in animation
       requestAnimationFrame(() => {
         overlay.classList.add('active');
       });
@@ -798,15 +793,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (this.isInitialized) return;
       
       this.createCards();
-      
-      // Wait for images to load
       await this.waitForImages();
-      
       this.measure();
       this.updateTransforms();
       this.isInitialized = true;
       
-      // Animate entry with GSAP if available
       if (window.gsap) {
         await this.animateEntry();
       }
@@ -849,10 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
       visibleCards.forEach(({ item, screenX }, idx) => {
         const state = { p: 0 };
         const { ry, tz, scale: baseScale } = this.computeTransformComponents(screenX);
-
-        // Offset by half card width to match transformForScreenX
         const offsetX = screenX - (this.CARD_W / 2);
-
         const START_SCALE = 0.85;
         const START_Y = 60;
 
@@ -905,7 +893,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const galleryCarousels = {};
   let activeCarousel = null;
   
-  // Initialize gallery carousels
   const initGalleryCarousels = async () => {
     const containers = document.querySelectorAll('.gallery-carousel-container');
     
@@ -918,7 +905,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     
-    // Initialize and start the first (active) carousel
     const firstCategory = 'coupes';
     if (galleryCarousels[firstCategory]) {
       await galleryCarousels[firstCategory].init();
@@ -926,7 +912,6 @@ document.addEventListener('DOMContentLoaded', () => {
       activeCarousel = galleryCarousels[firstCategory];
     }
     
-    // Handle resize for all carousels
     let resizeTimeout;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimeout);
@@ -940,7 +925,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
   
-  // Tab switching
   const tabs = document.querySelectorAll('#gallery .tabs li');
   const categoryContainers = {
     'coupes': document.querySelector('.gallery-carousel-container.coupes'),
@@ -953,30 +937,22 @@ document.addEventListener('DOMContentLoaded', () => {
     tab.addEventListener('click', async (e) => {
       e.preventDefault();
 
-      // Remove active class from all tabs
       tabs.forEach(t => t.classList.remove('is-active'));
-
-      // Add active class to clicked tab
       tab.classList.add('is-active');
 
-      // Get the category name from the data attribute
       const categoryName = tab.dataset.category;
 
-      // Stop current carousel
       if (activeCarousel) {
         activeCarousel.stop();
       }
 
-      // Hide all category containers
       Object.values(categoryContainers).forEach(container => {
         if (container) container.classList.add('is-hidden');
       });
 
-      // Show the selected category container
       if (categoryContainers[categoryName]) {
         categoryContainers[categoryName].classList.remove('is-hidden');
         
-        // Initialize carousel if not already done
         const carousel = galleryCarousels[categoryName];
         if (carousel) {
           if (!carousel.isInitialized) {
@@ -989,7 +965,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  // Pause carousels when tab is hidden
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
       if (activeCarousel) {
@@ -1006,9 +981,6 @@ document.addEventListener('DOMContentLoaded', () => {
   // INITIALIZATION
   // ===========================================
   
-  // Initialize review carousel
   initReviewCarousel();
-  
-  // Initialize gallery carousels
   initGalleryCarousels();
 });

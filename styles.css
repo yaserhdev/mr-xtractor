@@ -22251,6 +22251,10 @@ html {
     max-height: 95vh;
   }
 }
+#book-now h2 {
+  margin-bottom: 0px !important;
+}
+
 #book-now {
   padding: 4rem 1.5rem;
 }
