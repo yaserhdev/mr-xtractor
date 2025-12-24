@@ -1,5 +1,65 @@
 document.addEventListener('DOMContentLoaded', () => {
   // ===========================================
+  // SMOOTH SCROLL WITH CUSTOM SPEED
+  // ===========================================
+  
+  // Helper function for smooth scrolling with configurable speed
+  function smoothScrollTo(targetSection, duration) {
+    const navbarHeight = document.querySelector('.navbar').offsetHeight;
+    const targetPosition = targetSection.offsetTop - navbarHeight;
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let start = null;
+    
+    function animation(currentTime) {
+      if (start === null) start = currentTime;
+      const timeElapsed = currentTime - start;
+      const progress = Math.min(timeElapsed / duration, 1);
+      
+      // Ease in-out quad for smoother motion
+      const ease = progress < 0.5
+        ? 2 * progress * progress
+        : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+      
+      window.scrollTo(0, startPosition + distance * ease);
+      
+      if (timeElapsed < duration) {
+        requestAnimationFrame(animation);
+      }
+    }
+    
+    requestAnimationFrame(animation);
+  }
+  
+  // Navbar links get faster scroll (800ms)
+  document.querySelectorAll('.navbar-menu a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      
+      const targetSection = document.querySelector(targetId);
+      if (!targetSection) return;
+      
+      e.preventDefault();
+      smoothScrollTo(targetSection, 800); // Fast scroll for navbar
+    });
+  });
+  
+  // All other anchor links get slower scroll (1600ms)
+  document.querySelectorAll('a[href^="#"]:not(.navbar-menu a)').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (targetId === '#') return;
+      
+      const targetSection = document.querySelector(targetId);
+      if (!targetSection) return;
+      
+      e.preventDefault();
+      smoothScrollTo(targetSection, 1600); // Slower scroll for other links
+    });
+  });
+  
+  // ===========================================
   // NAVBAR FUNCTIONALITY
   // ===========================================
   const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
@@ -55,25 +115,32 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===========================================
   // SERVICE CARDS ANIMATION
   // ===========================================
-  const cards = document.querySelectorAll('#services .card');
+  const serviceColumns = document.querySelectorAll('#services .column');
+  const servicesSection = document.querySelector('#services');
 
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
+          // Add visible class to all columns when section comes into view
+          // CSS stagger delays will make them appear one at a time
+          serviceColumns.forEach(column => {
+            column.classList.add('is-visible');
+          });
           observer.unobserve(entry.target);
         }
       });
     },
     {
-      threshold: 0.1
+      threshold: 0.2,
+      rootMargin: '0px'
     }
   );
 
-  cards.forEach(card => {
-    observer.observe(card);
-  });
+  // Observe the services section
+  if (servicesSection) {
+    observer.observe(servicesSection);
+  }
 
   // ===========================================
   // 3D REVIEW CAROUSEL (UNCHANGED)
@@ -99,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pauseTimeout = null;
     let mobileCurrentIndex = 0;
 
-    const autoRotationSpeed = 0.05;
+    const autoRotationSpeed = 0.1;
     const friction = 0.95;
     const snapStrength = 0.05;
 
@@ -315,8 +382,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // GALLERY CAROUSEL (Based on Review Carousel)
   // ===========================================
   
-  // Each card contains a pair of images [top, bottom] - 13 pairs total (26 images)
+  // Each card contains a pair of images [top, bottom] - 14 pairs total (28 images)
   const GALLERY_IMAGES = [
+    ['./assets/13A.webp', './assets/13B.webp'],
     ['./assets/0A.webp', './assets/0B.webp'],
     ['./assets/1A.webp', './assets/1B.webp'],
     ['./assets/2A.webp', './assets/2B.webp'],
@@ -352,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pauseTimeout = null;
     let mobileCurrentIndex = 0;
 
-    const autoRotationSpeed = 0.05;
+    const autoRotationSpeed = 0.08;
     const friction = 0.95;
     const snapStrength = 0.05;
 
@@ -739,6 +807,58 @@ document.addEventListener('DOMContentLoaded', () => {
   if (galleryContainer) {
     initGalleryCarousel(galleryContainer, GALLERY_IMAGES);
   }
+
+  // ===========================================
+  // FLOATING CALL BUTTON - DATE/TIME VISIBILITY
+  // ===========================================
+  
+  const floatingCallBtn = document.getElementById('floating-call-btn');
+  
+  // Configure your phone number here
+  const PHONE_NUMBER = '+1234567890'; // Replace with actual phone number
+  floatingCallBtn.href = `tel:${PHONE_NUMBER}`;
+  
+  // Configure availability windows
+  // Format: { dayOfWeek: [0-6 where 0=Sunday], startHour: 0-23, endHour: 0-23 }
+  const AVAILABILITY_WINDOWS = [
+    // Example: Monday-Friday, 9 AM - 5 PM
+    { dayOfWeek: 1, startHour: 9, endHour: 17 },  // Monday
+    { dayOfWeek: 2, startHour: 9, endHour: 17 },  // Tuesday
+    { dayOfWeek: 3, startHour: 9, endHour: 17 },  // Wednesday
+    { dayOfWeek: 4, startHour: 9, endHour: 17 },  // Thursday
+    { dayOfWeek: 5, startHour: 9, endHour: 17 },  // Friday
+    
+    // Example: Saturday, 10 AM - 2 PM
+    { dayOfWeek: 6, startHour: 10, endHour: 14 }, // Saturday
+    
+    // Add more time windows as needed
+  ];
+  
+  function checkAvailability() {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0-6 (Sunday-Saturday)
+    const currentHour = now.getHours(); // 0-23
+    
+    // Check if current time falls within any availability window
+    const isAvailable = AVAILABILITY_WINDOWS.some(window => {
+      return window.dayOfWeek === currentDay && 
+             currentHour >= window.startHour && 
+             currentHour < window.endHour;
+    });
+    
+    // Show or hide button based on availability
+    if (isAvailable) {
+      floatingCallBtn.style.display = 'flex';
+    } else {
+      floatingCallBtn.style.display = 'none';
+    }
+  }
+  
+  // Check availability immediately
+  checkAvailability();
+  
+  // Recheck every minute to update visibility
+  setInterval(checkAvailability, 60000);
 
   // ===========================================
   // INITIALIZATION
