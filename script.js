@@ -315,92 +315,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // GALLERY CAROUSEL (Based on Review Carousel)
   // ===========================================
   
-  const GALLERY_IMAGES = {
-    coupes: [
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg',
-      './gtr.jpeg'
-    ],
-    sedans: [
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp',
-      './charger.webp'
-    ],
-    suvs: [
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg',
-      './urus.jpg'
-    ],
-    trucks: [
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg',
-      './trx.jpg'
-    ]
-  };
+  const GALLERY_IMAGES = [
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg',
+    './gtr.jpeg'
+  ];
 
   const initGalleryCarousel = (container, images) => {
     const carousel = container.querySelector('.gallery-carousel');
@@ -726,46 +661,13 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   
   // ===========================================
-  // GALLERY TAB MANAGEMENT
+  // GALLERY CAROUSEL INITIALIZATION
   // ===========================================
   
-  const tabs = document.querySelectorAll('#gallery .tabs li');
-  const categoryContainers = {
-    'coupes': document.querySelector('.gallery-carousel-container.coupes'),
-    'sedans': document.querySelector('.gallery-carousel-container.sedans'),
-    'suvs': document.querySelector('.gallery-carousel-container.suvs'),
-    'trucks': document.querySelector('.gallery-carousel-container.trucks')
-  };
-
-  // Initialize the first carousel (coupes) on load
-  if (categoryContainers['coupes']) {
-    initGalleryCarousel(categoryContainers['coupes'], GALLERY_IMAGES['coupes']);
+  const galleryContainer = document.querySelector('.gallery-carousel-container');
+  if (galleryContainer) {
+    initGalleryCarousel(galleryContainer, GALLERY_IMAGES);
   }
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', (e) => {
-      e.preventDefault();
-
-      tabs.forEach(t => t.classList.remove('is-active'));
-      tab.classList.add('is-active');
-
-      const categoryName = tab.dataset.category;
-
-      Object.values(categoryContainers).forEach(container => {
-        if (container) container.classList.add('is-hidden');
-      });
-
-      if (categoryContainers[categoryName]) {
-        categoryContainers[categoryName].classList.remove('is-hidden');
-        
-        // Initialize carousel if it hasn't been initialized yet
-        const carousel = categoryContainers[categoryName].querySelector('.gallery-carousel');
-        if (carousel && carousel.children.length === 0) {
-          initGalleryCarousel(categoryContainers[categoryName], GALLERY_IMAGES[categoryName]);
-        }
-      }
-    });
-  });
 
   // ===========================================
   // INITIALIZATION
