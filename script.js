@@ -315,26 +315,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // GALLERY CAROUSEL (Based on Review Carousel)
   // ===========================================
   
+  // Each card contains a pair of images [top, bottom] - 13 pairs total (26 images)
   const GALLERY_IMAGES = [
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg',
-    './gtr.jpeg'
+    ['./assets/0A.webp', './assets/0B.webp'],
+    ['./assets/1A.webp', './assets/1B.webp'],
+    ['./assets/2A.webp', './assets/2B.webp'],
+    ['./assets/3A.webp', './assets/3B.webp'],
+    ['./assets/4A.webp', './assets/4B.webp'],
+    ['./assets/5A.webp', './assets/5B.webp'],
+    ['./assets/6A.webp', './assets/6B.webp'],
+    ['./assets/7A.webp', './assets/7B.webp'],
+    ['./assets/8A.webp', './assets/8B.webp'],
+    ['./assets/9A.webp', './assets/9B.webp'],
+    ['./assets/10A.webp', './assets/10B.webp'],
+    ['./assets/11A.webp', './assets/11B.webp'],
+    ['./assets/12A.webp', './assets/12B.webp']
   ];
 
   const initGalleryCarousel = (container, images) => {
@@ -361,26 +356,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const friction = 0.95;
     const snapStrength = 0.05;
 
-    // Create gallery cards
-    images.forEach((imageSrc, index) => {
+    // Create gallery cards with stacked images
+    images.forEach((imagePair, index) => {
       const card = document.createElement('div');
       card.classList.add('gallery-carousel-card');
       if (index === 0) card.classList.add('is-active');
 
-      const img = document.createElement('img');
-      img.src = imageSrc;
-      img.alt = `Gallery image ${index + 1}`;
-      img.draggable = false;
+      // Create container for stacked images
+      const stackContainer = document.createElement('div');
+      stackContainer.classList.add('image-stack');
 
-      card.appendChild(img);
+      // Create top image (staggered to the right)
+      const imgTop = document.createElement('img');
+      imgTop.src = imagePair[0];
+      imgTop.alt = `Gallery image ${index * 2 + 1}`;
+      imgTop.draggable = false;
+      imgTop.classList.add('stack-image', 'stack-top');
+
+      // Create bottom image (staggered to the bottom-right)
+      const imgBottom = document.createElement('img');
+      imgBottom.src = imagePair[1];
+      imgBottom.alt = `Gallery image ${index * 2 + 2}`;
+      imgBottom.draggable = false;
+      imgBottom.classList.add('stack-image', 'stack-bottom');
+
+      stackContainer.appendChild(imgTop);
+      stackContainer.appendChild(imgBottom);
+      card.appendChild(stackContainer);
       carousel.appendChild(card);
 
-      // Add click event for fullscreen
-      card.addEventListener('click', () => {
-        if (!card.classList.contains('is-active')) {
-          snapToSlide(index);
+      // Add click events for each image
+      imgTop.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (card.classList.contains('is-active')) {
+          openFullscreen(imagePair[0]);
         } else {
-          openFullscreen(imageSrc);
+          snapToSlide(index);
+        }
+      });
+
+      imgBottom.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (card.classList.contains('is-active')) {
+          openFullscreen(imagePair[1]);
+        } else {
+          snapToSlide(index);
         }
       });
     });
@@ -614,26 +634,72 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 100);
     });
 
-    // Fullscreen image viewer
+    // Fullscreen image viewer with navigation
     function openFullscreen(imageSrc) {
+      // Flatten all images into a single array for navigation
+      const allImages = images.flatMap(pair => [pair[0], pair[1]]);
+      let currentIndex = allImages.indexOf(imageSrc);
+      
       const overlay = document.createElement('div');
       overlay.className = 'gallery-fullscreen-overlay';
 
       overlay.innerHTML = `
         <button class="gallery-fullscreen-close" aria-label="Close fullscreen">✕</button>
-        <img src="${imageSrc}" alt="Fullscreen image">
+        <button class="gallery-fullscreen-nav gallery-fullscreen-prev" aria-label="Previous image">
+          <span>‹</span>
+        </button>
+        <button class="gallery-fullscreen-nav gallery-fullscreen-next" aria-label="Next image">
+          <span>›</span>
+        </button>
+        <div class="gallery-fullscreen-content">
+          <img class="gallery-fullscreen-image" src="${imageSrc}" alt="Fullscreen image">
+        </div>
       `;
 
       document.body.appendChild(overlay);
       document.body.style.overflow = 'hidden';
+
+      const imgElement = overlay.querySelector('.gallery-fullscreen-image');
+      const prevBtn = overlay.querySelector('.gallery-fullscreen-prev');
+      const nextBtn = overlay.querySelector('.gallery-fullscreen-next');
+
+      const updateImage = (newIndex) => {
+        currentIndex = newIndex;
+        imgElement.style.opacity = '0';
+        setTimeout(() => {
+          imgElement.src = allImages[currentIndex];
+          imgElement.style.opacity = '1';
+        }, 150);
+      };
+
+      const showPrevious = () => {
+        const newIndex = (currentIndex - 1 + allImages.length) % allImages.length;
+        updateImage(newIndex);
+      };
+
+      const showNext = () => {
+        const newIndex = (currentIndex + 1) % allImages.length;
+        updateImage(newIndex);
+      };
 
       const closeFullscreen = () => {
         overlay.classList.add('closing');
         setTimeout(() => {
           overlay.remove();
           document.body.style.overflow = '';
+          document.removeEventListener('keydown', handleKeydown);
         }, 300);
       };
+
+      prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showPrevious();
+      });
+
+      nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showNext();
+      });
 
       overlay.querySelector('.gallery-fullscreen-close').addEventListener('click', closeFullscreen);
 
@@ -643,13 +709,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
-      const handleEsc = (e) => {
-        if (e.key === 'Escape' && overlay.parentNode) {
+      const handleKeydown = (e) => {
+        if (!overlay.parentNode) return;
+        
+        if (e.key === 'Escape') {
           closeFullscreen();
-          document.removeEventListener('keydown', handleEsc);
+        } else if (e.key === 'ArrowLeft') {
+          showPrevious();
+        } else if (e.key === 'ArrowRight') {
+          showNext();
         }
       };
-      document.addEventListener('keydown', handleEsc);
+      document.addEventListener('keydown', handleKeydown);
 
       requestAnimationFrame(() => {
         overlay.classList.add('active');
