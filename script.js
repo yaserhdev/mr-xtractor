@@ -930,100 +930,270 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
   // ===========================================
-  // GALLERY TAB MANAGEMENT
+  // INFINITE GALLERY CAROUSEL - STACKED IMAGES
   // ===========================================
   
-  const galleryCarousels = {};
-  let activeCarousel = null;
-  
-  const initGalleryCarousels = async () => {
-    const containers = document.querySelectorAll('.gallery-carousel-container');
+  const initGalleryCarousel = () => {
+    const galleryCarousel = document.getElementById('galleryCarousel');
     
-    containers.forEach((container) => {
-      const category = container.dataset.category;
-      const images = GALLERY_IMAGES[category];
+    if (!galleryCarousel) return;
+    
+    const carouselItems = galleryCarousel.querySelectorAll('.carousel-item');
+    const totalItems = carouselItems.length;
+    
+    if (totalItems === 0) return;
+    
+    let currentIndex = 0;
+    let isDragging = false;
+    let startX = 0;
+    let scrollLeft = 0;
+    let animationFrameId = null;
+    
+    // Clone items for infinite scroll
+    const firstClone = carouselItems[0].cloneNode(true);
+    const lastClone = carouselItems[totalItems - 1].cloneNode(true);
+    
+    galleryCarousel.appendChild(firstClone);
+    galleryCarousel.insertBefore(lastClone, carouselItems[0]);
+    
+    // Position to first real item
+    const scrollToIndex = (index, smooth = false) => {
+      const itemWidth = carouselItems[0].offsetWidth;
+      const gap = 30; // Match your carousel gap
+      const scrollPosition = (index + 1) * (itemWidth + gap);
       
-      if (images) {
-        galleryCarousels[category] = new GalleryCarousel(container, images);
-      }
-    });
-    
-    const firstCategory = 'coupes';
-    if (galleryCarousels[firstCategory]) {
-      await galleryCarousels[firstCategory].init();
-      galleryCarousels[firstCategory].start();
-      activeCarousel = galleryCarousels[firstCategory];
-    }
-    
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        Object.values(galleryCarousels).forEach(carousel => {
-          if (carousel.isInitialized) {
-            carousel.onResize();
-          }
-        });
-      }, 100);
-    });
-  };
-  
-  const tabs = document.querySelectorAll('#gallery .tabs li');
-  const categoryContainers = {
-    'coupes': document.querySelector('.gallery-carousel-container.coupes'),
-    'sedans': document.querySelector('.gallery-carousel-container.sedans'),
-    'suvs': document.querySelector('.gallery-carousel-container.suvs'),
-    'trucks': document.querySelector('.gallery-carousel-container.trucks')
-  };
-
-  tabs.forEach(tab => {
-    tab.addEventListener('click', async (e) => {
-      e.preventDefault();
-
-      tabs.forEach(t => t.classList.remove('is-active'));
-      tab.classList.add('is-active');
-
-      const categoryName = tab.dataset.category;
-
-      if (activeCarousel) {
-        activeCarousel.stop();
-      }
-
-      Object.values(categoryContainers).forEach(container => {
-        if (container) container.classList.add('is-hidden');
+      galleryCarousel.scrollTo({
+        left: scrollPosition,
+        behavior: smooth ? 'smooth' : 'auto'
       });
-
-      if (categoryContainers[categoryName]) {
-        categoryContainers[categoryName].classList.remove('is-hidden');
+    };
+    
+    // Initialize position
+    scrollToIndex(0, false);
+    
+    // Auto-scroll functionality
+    let autoScrollInterval;
+    const startAutoScroll = () => {
+      autoScrollInterval = setInterval(() => {
+        if (!isDragging) {
+          currentIndex = (currentIndex + 1) % totalItems;
+          scrollToIndex(currentIndex, true);
+        }
+      }, 3000);
+    };
+    
+    const stopAutoScroll = () => {
+      clearInterval(autoScrollInterval);
+    };
+    
+    // Handle infinite loop
+    const handleInfiniteScroll = () => {
+      const itemWidth = carouselItems[0].offsetWidth;
+      const gap = 30;
+      const scrollPosition = galleryCarousel.scrollLeft;
+      const itemSize = itemWidth + gap;
+      
+      // Check if we're at the cloned first item
+      if (scrollPosition >= itemSize * (totalItems + 1)) {
+        galleryCarousel.scrollLeft = itemSize;
+        currentIndex = 0;
+      }
+      
+      // Check if we're at the cloned last item
+      if (scrollPosition <= 0) {
+        galleryCarousel.scrollLeft = itemSize * totalItems;
+        currentIndex = totalItems - 1;
+      }
+    };
+    
+    // Scroll event listener
+    galleryCarousel.addEventListener('scroll', () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      
+      animationFrameId = requestAnimationFrame(handleInfiniteScroll);
+    });
+    
+    // Mouse/Touch drag functionality
+    const handleDragStart = (e) => {
+      isDragging = true;
+      stopAutoScroll();
+      startX = e.pageX || e.touches[0].pageX;
+      scrollLeft = galleryCarousel.scrollLeft;
+      galleryCarousel.style.cursor = 'grabbing';
+    };
+    
+    const handleDragMove = (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const x = e.pageX || e.touches[0].pageX;
+      const walk = (x - startX) * 2;
+      galleryCarousel.scrollLeft = scrollLeft - walk;
+    };
+    
+    const handleDragEnd = () => {
+      isDragging = false;
+      galleryCarousel.style.cursor = 'grab';
+      
+      // Snap to nearest item
+      const itemWidth = carouselItems[0].offsetWidth;
+      const gap = 30;
+      const itemSize = itemWidth + gap;
+      const snapIndex = Math.round(galleryCarousel.scrollLeft / itemSize);
+      
+      galleryCarousel.scrollTo({
+        left: snapIndex * itemSize,
+        behavior: 'smooth'
+      });
+      
+      setTimeout(startAutoScroll, 500);
+    };
+    
+    // Event listeners for drag
+    galleryCarousel.addEventListener('mousedown', handleDragStart);
+    galleryCarousel.addEventListener('touchstart', handleDragStart);
+    
+    galleryCarousel.addEventListener('mousemove', handleDragMove);
+    galleryCarousel.addEventListener('touchmove', handleDragMove);
+    
+    galleryCarousel.addEventListener('mouseup', handleDragEnd);
+    galleryCarousel.addEventListener('mouseleave', handleDragEnd);
+    galleryCarousel.addEventListener('touchend', handleDragEnd);
+    
+    // Fullscreen Lightbox functionality
+    const lightbox = document.getElementById('fullscreenLightbox');
+    const lightboxImage = document.getElementById('fullscreenImage');
+    const closeBtn = lightbox.querySelector('.fullscreen-close');
+    const prevBtn = lightbox.querySelector('.fullscreen-prev');
+    const nextBtn = lightbox.querySelector('.fullscreen-next');
+    
+    let allGalleryImages = [];
+    let currentLightboxIndex = 0;
+    
+    // Collect all images from the carousel
+    const collectAllImages = () => {
+      allGalleryImages = [];
+      const items = galleryCarousel.querySelectorAll('.gallery-stacked-item');
+      
+      items.forEach(item => {
+        const exteriorImg = item.querySelector('.gallery-exterior');
+        const interiorImg = item.querySelector('.gallery-interior');
         
-        const carousel = galleryCarousels[categoryName];
-        if (carousel) {
-          if (!carousel.isInitialized) {
-            await carousel.init();
+        if (exteriorImg) allGalleryImages.push(exteriorImg.src);
+        if (interiorImg) allGalleryImages.push(interiorImg.src);
+      });
+    };
+    
+    collectAllImages();
+    
+    const openLightbox = (imageSrc) => {
+      currentLightboxIndex = allGalleryImages.indexOf(imageSrc);
+      if (currentLightboxIndex === -1) currentLightboxIndex = 0;
+      
+      lightboxImage.src = allGalleryImages[currentLightboxIndex];
+      lightbox.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+      stopAutoScroll();
+    };
+    
+    const closeLightbox = () => {
+      lightbox.classList.remove('is-active');
+      document.body.style.overflow = '';
+      startAutoScroll();
+    };
+    
+    const showNextImage = () => {
+      currentLightboxIndex = (currentLightboxIndex + 1) % allGalleryImages.length;
+      lightboxImage.src = allGalleryImages[currentLightboxIndex];
+    };
+    
+    const showPrevImage = () => {
+      currentLightboxIndex = (currentLightboxIndex - 1 + allGalleryImages.length) % allGalleryImages.length;
+      lightboxImage.src = allGalleryImages[currentLightboxIndex];
+    };
+    
+    // Add click listeners to all images (both exterior and interior)
+    const allImages = galleryCarousel.querySelectorAll('.gallery-exterior, .gallery-interior');
+    allImages.forEach(img => {
+      img.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openLightbox(img.src);
+      });
+    });
+    
+    // Button event listeners
+    closeBtn.addEventListener('click', closeLightbox);
+    if (prevBtn) prevBtn.addEventListener('click', showPrevImage);
+    if (nextBtn) nextBtn.addEventListener('click', showNextImage);
+    
+    // ESC key to close lightbox
+    document.addEventListener('keydown', (e) => {
+      if (!lightbox.classList.contains('is-active')) return;
+      
+      if (e.key === 'Escape') {
+        closeLightbox();
+      } else if (e.key === 'ArrowRight') {
+        showNextImage();
+      } else if (e.key === 'ArrowLeft') {
+        showPrevImage();
+      }
+    });
+    
+    // Swipe functionality for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
+    
+    const handleSwipe = () => {
+      const deltaX = touchEndX - touchStartX;
+      const deltaY = touchEndY - touchStartY;
+      
+      // Only trigger swipe if horizontal movement is greater than vertical
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (Math.abs(deltaX) > 50) { // Minimum swipe distance
+          if (deltaX > 0) {
+            showPrevImage();
+          } else {
+            showNextImage();
           }
-          carousel.start();
-          activeCarousel = carousel;
         }
       }
+    };
+    
+    lightbox.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
     });
-  });
-  
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) {
-      if (activeCarousel) {
-        activeCarousel.stop();
-      }
-    } else {
-      if (activeCarousel && activeCarousel.isInitialized) {
-        activeCarousel.start();
-      }
-    }
-  });
+    
+    lightbox.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
+      handleSwipe();
+    });
+    
+    // Start auto-scroll
+    startAutoScroll();
+    
+    // Pause auto-scroll when carousel is not visible
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          startAutoScroll();
+        } else {
+          stopAutoScroll();
+        }
+      });
+    });
+    
+    observer.observe(galleryCarousel);
+  };
 
   // ===========================================
   // INITIALIZATION
   // ===========================================
   
   initReviewCarousel();
-  initGalleryCarousels();
+  initGalleryCarousel();
 });

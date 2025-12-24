@@ -308,77 +308,92 @@
     </section>
 
     <!-- Gallery Section -->
+    <!-- Infinite Gallery Carousel Section -->
     <section id="gallery" class="section">
         <div class="container">
             <h2 class="title is-2">Gallery</h2>
-            <div class="tabs is-centered pb-4">
-                <ul>
-                    <li class="is-active" data-category="coupes"><a>Coupes</a></li>
-                    <li data-category="sedans"><a>Sedans</a></li>
-                    <li data-category="suvs"><a>SUVs</a></li>
-                    <li data-category="trucks"><a>Trucks</a></li>
-                </ul>
+            <div class="infinite-carousel-container">
+                <div class="infinite-carousel" id="galleryCarousel">
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/1.webp" alt="Car 1 Exterior" class="gallery-exterior">
+                        <img src="./assets/2.webp" alt="Car 1 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/3.webp" alt="Car 2 Exterior" class="gallery-exterior">
+                        <img src="./assets/4.webp" alt="Car 2 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/5.webp" alt="Car 3 Exterior" class="gallery-exterior">
+                        <img src="./assets/6.webp" alt="Car 3 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/7.webp" alt="Car 4 Exterior" class="gallery-exterior">
+                        <img src="./assets/8.webp" alt="Car 4 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/9.webp" alt="Car 5 Exterior" class="gallery-exterior">
+                        <img src="./assets/10.webp" alt="Car 5 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/11.webp" alt="Car 6 Exterior" class="gallery-exterior">
+                        <img src="./assets/12.webp" alt="Car 6 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/13.webp" alt="Car 7 Exterior" class="gallery-exterior">
+                        <img src="./assets/14.webp" alt="Car 7 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/15.webp" alt="Car 8 Exterior" class="gallery-exterior">
+                        <img src="./assets/16.webp" alt="Car 8 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/17.webp" alt="Car 9 Exterior" class="gallery-exterior">
+                        <img src="./assets/18.webp" alt="Car 9 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/19.webp" alt="Car 10 Exterior" class="gallery-exterior">
+                        <img src="./assets/20.webp" alt="Car 10 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/21.webp" alt="Car 11 Exterior" class="gallery-exterior">
+                        <img src="./assets/22.webp" alt="Car 11 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/23.webp" alt="Car 12 Exterior" class="gallery-exterior">
+                        <img src="./assets/24.webp" alt="Car 12 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/25.webp" alt="Car 13 Exterior" class="gallery-exterior">
+                        <img src="./assets/26.webp" alt="Car 13 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/27.webp" alt="Car 14 Exterior" class="gallery-exterior">
+                        <img src="./assets/28.webp" alt="Car 14 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/29.webp" alt="Car 15 Exterior" class="gallery-exterior">
+                        <img src="./assets/30.webp" alt="Car 15 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/31.webp" alt="Car 16 Exterior" class="gallery-exterior">
+                        <img src="./assets/32.webp" alt="Car 16 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/33.webp" alt="Car 17 Exterior" class="gallery-exterior">
+                        <img src="./assets/34.webp" alt="Car 17 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/35.webp" alt="Car 18 Exterior" class="gallery-exterior">
+                        <img src="./assets/36.webp" alt="Car 18 Interior" class="gallery-interior">
+                    </div>
+                    <div class="carousel-item gallery-stacked-item">
+                        <img src="./assets/37.webp" alt="Car 19 Exterior" class="gallery-exterior">
+                        <img src="./assets/38.webp" alt="Car 19 Interior" class="gallery-interior">
+                    </div>
+                </div>
             </div>
-            
-            <!-- Coupes Carousel -->
-            <div class="gallery-carousel-container coupes" data-category="coupes">
-                <div class="gallery-stage" aria-label="Coupes gallery carousel">
-                    <section class="gallery-cards"></section>
-                </div>
-                <div class="gallery-nav">
-                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
-                        <span>‹</span>
-                    </button>
-                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
-                        <span>›</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Sedans Carousel -->
-            <div class="gallery-carousel-container sedans is-hidden" data-category="sedans">
-                <div class="gallery-stage" aria-label="Sedans gallery carousel">
-                    <section class="gallery-cards"></section>
-                </div>
-                <div class="gallery-nav">
-                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
-                        <span>‹</span>
-                    </button>
-                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
-                        <span>›</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- SUVs Carousel -->
-            <div class="gallery-carousel-container suvs is-hidden" data-category="suvs">
-                <div class="gallery-stage" aria-label="SUVs gallery carousel">
-                    <section class="gallery-cards"></section>
-                </div>
-                <div class="gallery-nav">
-                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
-                        <span>‹</span>
-                    </button>
-                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
-                        <span>›</span>
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Trucks Carousel -->
-            <div class="gallery-carousel-container trucks is-hidden" data-category="trucks">
-                <div class="gallery-stage" aria-label="Trucks gallery carousel">
-                    <section class="gallery-cards"></section>
-                </div>
-                <div class="gallery-nav">
-                    <button class="gallery-nav-btn gallery-nav-prev" aria-label="Previous image">
-                        <span>‹</span>
-                    </button>
-                    <button class="gallery-nav-btn gallery-nav-next" aria-label="Next image">
-                        <span>›</span>
-                    </button>
-                </div>
-            </div>
+        </div>
+    </section>
         </div>
     </section>
 
@@ -444,6 +459,16 @@
             </p>
         </div>
     </footer>
+
+    <!-- Fullscreen Image Lightbox -->
+    <div id="fullscreenLightbox" class="fullscreen-lightbox">
+        <button class="fullscreen-close" aria-label="Close fullscreen">&times;</button>
+        <div class="fullscreen-content">
+            <img id="fullscreenImage" src="" alt="Fullscreen Image">
+        </div>
+        <button class="fullscreen-nav fullscreen-prev" aria-label="Previous image">‹</button>
+        <button class="fullscreen-nav fullscreen-next" aria-label="Next image">›</button>
+    </div>
 
     <!-- GSAP for smooth animations -->
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
