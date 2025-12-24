@@ -558,7 +558,7 @@ html {
 }
 
 // ===========================================
-// INFINITE GALLERY CAROUSEL STYLES
+// GALLERY CAROUSEL STYLES (Same as Review Carousel)
 // ===========================================
 
 // Gallery section adjustments
@@ -592,99 +592,70 @@ html {
     }
 }
 
-// Gallery Carousel Container
-.gallery-carousel-container {
-    position: relative;
+.gallery-carousel-wrapper {
     width: 100%;
+    max-width: 1400px;
     margin: 0 auto;
+    overflow: visible;
 }
 
-// Gallery Stage (3D perspective container)
-.gallery-stage {
-    position: relative;
+.gallery-carousel-scene {
     width: 100%;
     height: 420px;
-    perspective: 1800px;
+    perspective: 1600px;
     overflow: visible;
-    overscroll-behavior: none;
-    -webkit-user-select: none;
-    user-select: none;
-    cursor: grab;
-    
-    &.dragging {
-        cursor: grabbing;
-    }
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-// Cards container
-.gallery-cards {
-    position: absolute;
-    inset: 0;
+.gallery-carousel {
+    width: 58%;
+    height: 380px;
+    position: relative;
     transform-style: preserve-3d;
 }
 
-// Individual card
-.gallery-card {
+.gallery-carousel-card {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: min(26vw, 320px);
-    aspect-ratio: 4/5;
-    isolation: isolate;
-    transform-style: preserve-3d;
+    width: 100%;
+    height: 380px;
+    left: 0;
     backface-visibility: hidden;
-    will-change: transform, filter;
-    transform-origin: center center;
-    contain: layout paint;
+    transition: opacity 0.6s ease, box-shadow 0.3s ease;
+    cursor: pointer;
     border-radius: 12px;
     overflow: hidden;
     box-shadow:
         0 25px 50px -12px rgba(0, 0, 0, 0.8),
         0 0 0 1px rgba(226, 4, 8, 0.2);
-    transition: box-shadow 0.3s ease;
-
-    &.is-active {
-        box-shadow:
-            0 30px 60px -12px rgba(0, 0, 0, 0.9),
-            0 0 40px rgba(226, 4, 8, 0.3),
-            0 0 0 2px rgba(226, 4, 8, 0.5);
-    }
 }
 
-@media (min-width: $large) and (max-width: $xl - 1) {
-  .gallery-nav {
-    margin-top: 2.5rem !important;
-  }
-}
-
-@media (max-width: $large - 1) {
-  .gallery-nav {
-    margin-top: 3rem !important;
-  }
-}
-
-.gallery-card__img {
-    border-radius: 12px;
-    opacity: 1;
+.gallery-carousel-card img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    transform: translateZ(0);
-    -webkit-user-drag: none;
-    user-select: none;
+    border-radius: 12px;
 }
 
-// Navigation buttons
-.gallery-nav {
+.gallery-carousel-card.is-active {
+    box-shadow:
+        0 30px 60px -12px rgba(0, 0, 0, 0.9),
+        0 0 40px rgba(226, 4, 8, 0.3),
+        0 0 0 2px rgba(226, 4, 8, 0.5);
+}
+
+// Carousel Controls
+.gallery-carousel-controls {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
+    gap: 1.5rem;
     margin-top: 2rem;
 }
 
-.gallery-nav-btn {
+.gallery-carousel-btn {
     width: 50px;
     height: 50px;
     border-radius: 50%;
@@ -708,85 +679,107 @@ html {
     &:active {
         transform: scale(0.95);
     }
-    
+
     span {
         line-height: 1;
         margin-top: -3px;
     }
 }
 
-// Responsive Gallery Carousel
-@media (max-width: 1200px) {
-    .gallery-stage {
-        height: 380px;
-        perspective: 1600px;
+.gallery-carousel-indicators {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.gallery-carousel-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    &:hover {
+        background: rgba(226, 4, 8, 0.5);
     }
     
-    .gallery-card {
-        width: min(30vw, 300px);
+    &.is-active {
+        background: #E20408;
+        box-shadow: 0 0 10px rgba(226, 4, 8, 0.6);
+        transform: scale(1.2);
     }
 }
 
-@media (max-width: 1000px) {
-    .gallery-stage {
-        height: 350px;
+// Responsive Adjustments
+@media (max-width: $large) {
+    .gallery-carousel-scene {
         perspective: 1400px;
+        height: 380px;
     }
     
-    .gallery-card {
-        width: min(35vw, 280px);
+    .gallery-carousel {
+        width: 52%;
+        height: 340px;
+    }
+    
+    .gallery-carousel-card {
+        height: 340px;
     }
 }
 
-@media (max-width: 800px) {
-    .gallery-stage {
-        height: 320px;
+@media (max-width: $medium) {
+    .gallery-carousel-scene {
         perspective: 1200px;
+        height: 340px;
     }
     
-    .gallery-card {
-        width: min(42vw, 260px);
+    .gallery-carousel {
+        width: 48%;
+        height: 300px;
+    }
+    
+    .gallery-carousel-card {
+        height: 300px;
     }
 }
 
-@media (max-width: 600px) {
-    .gallery-stage {
+// Mobile single-card view
+@media (max-width: 650px) {
+    .gallery-carousel-scene {
+        height: 340px;
+        perspective: none;
+    }
+    
+    .gallery-carousel {
+        width: 85%;
+        transform-style: flat;
         height: 300px;
-        perspective: 1000px;
     }
     
-    .gallery-card {
-        width: min(55vw, 240px);
+    .gallery-carousel-card {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        transform: none !important;
+        height: 300px;
     }
     
-    .gallery-nav-btn {
+    .gallery-carousel-card.is-active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+    
+    .gallery-carousel-btn {
         width: 44px;
         height: 44px;
         font-size: 1.5rem;
     }
 }
 
-@media (max-width: 480px) {
-    .gallery-stage {
-        height: 280px;
-        perspective: 800px;
-    }
-    
-    .gallery-card {
-        width: min(65vw, 220px);
-    }
-    
-    .gallery-nav {
-        gap: 1.5rem;
-        margin-top: 1.5rem;
-    }
-}
-
-// Reduced motion preference
-@media (prefers-reduced-motion: reduce) {
-    .gallery-card {
-        transition: none !important;
-        animation: none !important;
+@media (max-width: 400px) {
+    .gallery-carousel {
+        width: 90%;
     }
 }
 
@@ -979,167 +972,4 @@ html {
       min-height: 1200px;
     }
   }
-}
-// Infinite Gallery Carousel - Stacked Images
-#galleryCarousel {
-    .carousel-item {
-        &.gallery-stacked-item {
-            position: relative;
-            width: 400px;
-            height: 500px;
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-
-            @media screen and (max-width: 768px) {
-                width: 280px;
-                height: 400px;
-            }
-        }
-    }
-
-    // Exterior Image (Top, Fully Visible)
-    .gallery-exterior {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 70%;
-        object-fit: cover;
-        border-radius: 8px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-        z-index: 2;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        
-        &:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-        }
-    }
-
-    // Interior Image (Bottom, Peeking from Bottom-Right)
-    .gallery-interior {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 85%;
-        height: 50%;
-        object-fit: cover;
-        border-radius: 8px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
-        z-index: 1;
-        transform: translateX(5%) translateY(5%);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        
-        &:hover {
-            transform: translateX(5%) translateY(1%);
-            box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
-        }
-    }
-}
-
-// Fullscreen Image Lightbox
-.fullscreen-lightbox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.98);
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    
-    &.is-active {
-        display: flex;
-    }
-    
-    .fullscreen-content {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        
-        @media screen and (max-width: 768px) {
-            padding: 60px 10px 10px 10px;
-        }
-        
-        img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-    }
-    
-    .fullscreen-close {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        font-size: 40px;
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        cursor: pointer;
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1;
-        transition: background 0.2s ease;
-        
-        &:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        @media screen and (max-width: 768px) {
-            top: 10px;
-            right: 10px;
-            width: 45px;
-            height: 45px;
-            font-size: 35px;
-        }
-    }
-    
-    .fullscreen-nav {
-        position: fixed;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(255, 255, 255, 0.2);
-        border: none;
-        color: white;
-        font-size: 50px;
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        cursor: pointer;
-        z-index: 10000;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background 0.2s ease;
-        
-        &:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        &.fullscreen-prev {
-            left: 20px;
-        }
-        
-        &.fullscreen-next {
-            right: 20px;
-        }
-        
-        @media screen and (max-width: 768px) {
-            display: none; // Hide on mobile, use swipe instead
-        }
-    }
 }
