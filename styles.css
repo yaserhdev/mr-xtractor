@@ -21560,6 +21560,31 @@ has-background-danger.is-hoverable:active {
   pointer-events: all !important;
 }
 
+body,
+html,
+p,
+a,
+span,
+li,
+input,
+textarea,
+button,
+.content,
+.navbar-item,
+.card-content,
+.review-text,
+.about-text {
+  font-family: "Inter", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6,
+.title,
+.subtitle,
+.author-name,
+.about-name {
+  font-family: "Poppins", sans-serif;
+}
+
 .navbar-brand img {
   max-height: 50px;
   width: auto;
@@ -21902,7 +21927,7 @@ html {
 
 .carousel-scene {
   width: 100%;
-  height: 320px;
+  height: 380px;
   perspective: 1600px;
   overflow: visible;
   display: flex;
@@ -21912,7 +21937,7 @@ html {
 
 .carousel {
   width: 58%;
-  height: 280px;
+  height: 340px;
   position: relative;
   transform-style: preserve-3d;
 }
@@ -21920,7 +21945,7 @@ html {
 .carousel-card {
   position: absolute;
   width: 100%;
-  height: 280px;
+  height: 340px;
   left: 0;
   backface-visibility: hidden;
   transition: opacity 0.6s ease, box-shadow 0.3s ease;
@@ -21932,7 +21957,7 @@ html {
   background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
   border: 1px solid rgba(226, 4, 8, 0.3);
   border-radius: 16px;
-  padding: 1.75rem 2rem;
+  padding: 1.5rem 1.75rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -21945,12 +21970,13 @@ html {
 }
 
 .review-stars {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: #E20408;
   letter-spacing: 4px;
   text-shadow: 0 0 10px rgba(226, 4, 8, 0.5);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .review-text {
@@ -21959,14 +21985,34 @@ html {
   line-height: 1.6;
   font-style: italic;
   flex-grow: 1;
-  display: flex;
-  align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  padding-right: 0.5rem;
+}
+.review-text::-webkit-scrollbar {
+  width: 6px;
+}
+.review-text::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+.review-text::-webkit-scrollbar-thumb {
+  background: rgba(226, 4, 8, 0.5);
+  border-radius: 10px;
+}
+.review-text::-webkit-scrollbar-thumb:hover {
+  background: rgba(226, 4, 8, 0.7);
 }
 
 .review-author {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 0.75rem;
+  flex-shrink: 0;
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: 1px solid rgba(226, 4, 8, 0.2);
@@ -22064,7 +22110,7 @@ html {
 }
 @media (max-width: 650px) {
   .carousel-scene {
-    height: 300px;
+    height: 360px;
     perspective: none;
   }
   .carousel {
@@ -22076,7 +22122,7 @@ html {
     pointer-events: none;
     transition: opacity 0.4s ease;
     transform: none !important;
-    height: 270px;
+    height: 320px;
   }
   .carousel-card.is-active {
     opacity: 1;
@@ -22084,7 +22130,7 @@ html {
   }
   .carousel,
   .carousel-card {
-    height: 270px;
+    height: 320px;
   }
   .review-card {
     padding: 1.25rem 1.5rem;
@@ -22110,10 +22156,10 @@ html {
   }
   .carousel,
   .carousel-card {
-    height: 280px;
+    height: 340px;
   }
   .carousel-scene {
-    height: 320px;
+    height: 380px;
   }
 }
 #gallery {
@@ -22562,6 +22608,9 @@ html {
 }
 #book-now .title.is-2 {
   color: white;
+}
+#book-now h2 {
+  margin-bottom: 15px !important;
 }
 #book-now .booking-form-container {
   max-width: 750px;

@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pauseTimeout = null;
     let mobileCurrentIndex = 0;
 
-    const autoRotationSpeed = 0.1;
+    const autoRotationSpeed = 0.06;
     const friction = 0.95;
     const snapStrength = 0.05;
 
@@ -420,7 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let pauseTimeout = null;
     let mobileCurrentIndex = 0;
 
-    const autoRotationSpeed = 0.08;
+    const autoRotationSpeed = 0.05;
     const friction = 0.95;
     const snapStrength = 0.05;
 
@@ -815,23 +815,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const floatingCallBtn = document.getElementById('floating-call-btn');
   
   // Configure your phone number here
-  const PHONE_NUMBER = '+1234567890'; // Replace with actual phone number
+  const PHONE_NUMBER = '+17036266014'; // Replace with actual phone number
   floatingCallBtn.href = `tel:${PHONE_NUMBER}`;
   
   // Configure availability windows
   // Format: { dayOfWeek: [0-6 where 0=Sunday], startHour: 0-23, endHour: 0-23 }
   const AVAILABILITY_WINDOWS = [
     // Example: Monday-Friday, 9 AM - 5 PM
-    { dayOfWeek: 1, startHour: 9, endHour: 17 },  // Monday
-    { dayOfWeek: 2, startHour: 9, endHour: 17 },  // Tuesday
-    { dayOfWeek: 3, startHour: 9, endHour: 17 },  // Wednesday
-    { dayOfWeek: 4, startHour: 9, endHour: 17 },  // Thursday
-    { dayOfWeek: 5, startHour: 9, endHour: 17 },  // Friday
-    
-    // Example: Saturday, 10 AM - 2 PM
-    { dayOfWeek: 6, startHour: 10, endHour: 14 }, // Saturday
-    
-    // Add more time windows as needed
+    { dayOfWeek: 0, startHour: 6, endHour: 18 },  // Sunday
+    { dayOfWeek: 1, startHour: 6, endHour: 18 },  // Monday
+    { dayOfWeek: 2, startHour: 6, endHour: 18 },  // Tuesday
+    { dayOfWeek: 3, startHour: 6, endHour: 18 },  // Wednesday
+    { dayOfWeek: 4, startHour: 6, endHour: 18 },  // Thursday
+    { dayOfWeek: 5, startHour: 6, endHour: 18 },  // Friday
+    { dayOfWeek: 6, startHour: 6, endHour: 18 }   // Saturday
   ];
   
   function checkAvailability() {
