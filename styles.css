@@ -21688,7 +21688,7 @@ h1, h2, h3, h4, h5, h6,
 #services .column {
   opacity: 0;
   transform: translateY(40px);
-  transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 #services .column.is-visible {
   opacity: 1;
@@ -21896,6 +21896,7 @@ section .title.is-2::after {
   top: 0;
   width: 100%;
   z-index: 1000;
+  background-color: #06070A;
 }
 
 body {
@@ -21911,6 +21912,7 @@ html {
   margin-top: auto;
   padding: 0.5rem 1.5rem;
   min-height: 3.25rem;
+  background-color: #06070A;
 }
 
 @media (min-width: 600px) and (max-width: 799px) {

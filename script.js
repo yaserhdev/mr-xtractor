@@ -41,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!targetSection) return;
       
       e.preventDefault();
+      this.blur(); // Remove focus to prevent highlight
       smoothScrollTo(targetSection, 800); // Fast scroll for navbar
     });
   });
@@ -102,6 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
           }
 
           document.body.style.paddingTop = '3.25rem';
+
+          link.blur(); // Remove focus to prevent highlight
 
           window.scrollTo({
             top: targetOffsetTop - navbarHeight,
