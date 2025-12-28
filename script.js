@@ -822,13 +822,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Format: { dayOfWeek: [0-6 where 0=Sunday], startHour: 0-23, endHour: 0-23 }
   const AVAILABILITY_WINDOWS = [
     // Example: Monday-Friday, 9 AM - 5 PM
-    { dayOfWeek: 0, startHour: 6, endHour: 18 },  // Sunday
-    { dayOfWeek: 1, startHour: 6, endHour: 18 },  // Monday
-    { dayOfWeek: 2, startHour: 6, endHour: 18 },  // Tuesday
-    { dayOfWeek: 3, startHour: 6, endHour: 18 },  // Wednesday
-    { dayOfWeek: 4, startHour: 6, endHour: 18 },  // Thursday
-    { dayOfWeek: 5, startHour: 6, endHour: 18 },  // Friday
-    { dayOfWeek: 6, startHour: 6, endHour: 18 }   // Saturday
+    { dayOfWeek: 0, startHour: 6, endHour: 21 },  // Sunday
+    { dayOfWeek: 1, startHour: 6, endHour: 21 },  // Monday
+    { dayOfWeek: 2, startHour: 6, endHour: 21 },  // Tuesday
+    { dayOfWeek: 3, startHour: 6, endHour: 21 },  // Wednesday
+    { dayOfWeek: 4, startHour: 6, endHour: 21 },  // Thursday
+    { dayOfWeek: 5, startHour: 6, endHour: 21 },  // Friday
+    { dayOfWeek: 6, startHour: 6, endHour: 21 }   // Saturday
   ];
   
   function checkAvailability() {
